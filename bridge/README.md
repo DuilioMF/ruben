@@ -21,3 +21,4 @@ El BAT:
 - No se guardan contraseñas en GitHub.
 - La contraseña se mantiene sólo durante el intento de conexión.
 - No hay reconexión automática ni perfil PostgreSQL precargado.
+
