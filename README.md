@@ -33,14 +33,19 @@ Especialista de DoingLio para siniestros. Sigue el circuito presupuesto → auto
 ## Conexión
 
 - Motor: **PostgreSQL**
-- Pantalla preparada para conector local en `127.0.0.1:8788`
+- Bridge local: `127.0.0.1:8788`
+- Arranque Windows: `RUBEN.bat`
+- Carpeta local: `C:\\Sistemas\\Ruben`
+- Driver: `psycopg[binary]`
 - La contraseña se usa sólo durante la conexión y no se guarda en GitHub.
-- Falta completar y probar el bridge PostgreSQL real.
+- El bridge real quedó implementado; falta probarlo contra la PostgreSQL del equipo.
 
 ## Archivos principales
 
 - `index.html`: portada de Ruben.
 - `conexion-postgres.html`: pantalla de conexión PostgreSQL.
+- `RUBEN.bat`: inicia y valida el conector local.
+- `bridge/ruben_local.py`: bridge PostgreSQL local.
 - `.github/workflows/pages.yml`: despliegue preparado para GitHub Pages.
 
 ## Seguridad
