@@ -1,6 +1,6 @@
 # Ruben
 
-[![Ver Trello](https://img.shields.io/badge/VER-TRELLO-0052CC?style=for-the-badge)](https://trello.com/c/M87mZT1d)
+[![Ver Trello](https://img.shields.io/badge/VER-TRELLO-0052CC?style=for-the-badge)](https://trello.com/c/oUB73hRq)
 [![Repo Ruben](https://img.shields.io/badge/▶%20REPO-RUBEN-54bfc3?style=for-the-badge)](https://github.com/DuilioMF/ruben)
 [![Volver a DoingLio](https://img.shields.io/badge/←%20VOLVER-DOINGLIO-111111?style=for-the-badge)](https://doinglio.revalsoftia.chatgpt.site/)
 [![Capitán Rodolfo](https://img.shields.io/badge/🧠%20ABRIR-CAPITÁN%20RODOLFO-c8793f?style=for-the-badge)](https://capitan-rodolfo.revalsoftia.chatgpt.site/)
