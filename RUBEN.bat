@@ -123,3 +123,4 @@ echo.
 if exist "%LOG%" type "%LOG%"
 pause
 exit /b 1
+
