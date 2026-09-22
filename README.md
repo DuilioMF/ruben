@@ -1,8 +1,8 @@
 # Ruben
 
-[![Ver Ruben en GitHub](https://img.shields.io/badge/▶%20VER-RUBEN-54bfc3?style=for-the-badge)](https://github.com/DuilioMF/ruben)
+[![Repo Ruben](https://img.shields.io/badge/▶%20REPO-RUBEN-54bfc3?style=for-the-badge)](https://github.com/DuilioMF/ruben)
 [![Volver a DoingLio](https://img.shields.io/badge/←%20VOLVER-DOINGLIO-111111?style=for-the-badge)](https://doinglio.revalsoftia.chatgpt.site/)
-[![Capitán Rodolfo](https://img.shields.io/badge/🧠%20ABRIR-CAPITÁN%20RODOLFO-c8793f?style=for-the-badge)](https://duiliomf.github.io/capitan-rodolfo/)
+[![Capitán Rodolfo](https://img.shields.io/badge/🧠%20ABRIR-CAPITÁN%20RODOLFO-c8793f?style=for-the-badge)](https://capitan-rodolfo.revalsoftia.chatgpt.site/)
 
 ## Qué es
 
