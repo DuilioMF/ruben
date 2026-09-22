@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ruben · PostgreSQL</title>
+<style>
+:root{--bg:#090a0c;--panel:#111318;--line:#2f353c;--cyan:#54bfc3;--text:#f0eee8;--muted:#9ca1a6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 40% 0,#10282c,#090a0c 45%);color:var(--text);font-family:Segoe UI,Arial,sans-serif;min-height:100vh}
+.wrap{width:min(900px,94vw);margin:32px auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.top a{color:#c9c3b8;text-decoration:none}
+.card{background:#111318ef;border:1px solid var(--line);border-radius:20px;padding:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.wide{grid-column:1/-1}
+label{display:block;color:var(--muted);font-size:12px;margin:8px 0 6px}input{width:100%;background:#0b0d10;border:1px solid #343b43;color:white;padding:12px;border-radius:10px}
+button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,#54bfc3,#86d8da);padding:13px;font-weight:900;cursor:pointer;color:#071012}
+.status{margin-top:15px;padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:13px}.ok{color:#82e3bd}.bad{color:#ffaaaa}
+.note{margin-top:14px;color:#858a91;font-size:12px;line-height:1.6}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
+</style></head>
+<body>
+<div class="wrap">
+<div class="top"><div><strong>🧠 Ruben · PostgreSQL</strong><div style="color:#7d858d;font-size:12px">Conector local</div></div><a href="index.html">← Volver</a></div>
+<div class="card">
+  <div class="grid">
+    <div class="wide"><label>Servidor / Host</label><input id="host" value="127.0.0.1"></div>
+    <div><label>Puerto</label><input id="port" value="5432"></div>
+    <div><label>Base de datos</label><input id="database"></div>
+    <div><label>Usuario</label><input id="user"></div>
+    <div><label>Contraseña</label><input id="password" type="password"></div>
+  </div>
+  <button id="connect">Conectar PostgreSQL</button>
+  <div id="status" class="status">Esperando conexión local en 127.0.0.1:8788.</div>
+  <div class="note">La contraseña sólo se envía al conector local cuando apretás Conectar. Esta pantalla no la guarda.</div>
+</div>
+</div>
+<script>
+const BRIDGE='http://127.0.0.1:8788';
+const statusEl=document.getElementById('status');
+document.getElementById('connect').onclick=async()=>{
+  statusEl.className='status';statusEl.textContent='Conectando…';
+  const payload={
+    host:document.getElementById('host').value.trim(),
+    port:Number(document.getElementById('port').value||5432),
+    database:document.getElementById('database').value.trim(),
+    user:document.getElementById('user').value.trim(),
+    password:document.getElementById('password').value
+  };
+  try{
+    const r=await fetch(BRIDGE+'/api/connect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const body=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(body.error||('HTTP '+r.status));
+    sessionStorage.setItem('ruben.pg.sessionId',body.sessionId||'');
+    statusEl.className='status ok';
+    statusEl.textContent='PostgreSQL conectado'+(body.serverVersion?' · '+body.serverVersion:'');
+  }catch(e){
+    statusEl.className='status bad';
+    statusEl.textContent='No se pudo conectar: '+e.message+'. Verificá que el conector local de Ruben esté iniciado.';
+  }finally{
+    document.getElementById('password').value='';
+  }
+};
+</script>
+</body></html>
