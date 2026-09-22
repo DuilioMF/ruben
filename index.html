@@ -16,19 +16,26 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
 .brand{display:flex;gap:14px;align-items:center}.icon{width:54px;height:54px;display:grid;place-items:center}.icon img{width:54px;height:54px;display:block;filter:drop-shadow(0 0 10px #d9823b22)}
 .brand strong{display:block;letter-spacing:.22em}.brand small{color:#7d999b;font-size:9px;letter-spacing:.2em}
 .back{color:#c8c1b3;text-decoration:none;font-size:12px}
+.data-btn{display:inline-block;padding:12px 16px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;background:#12303355;font-weight:700;font-size:12px}
+.process{margin-top:22px;border:1px solid var(--line);background:#ffffff04;padding:24px}
+.process h2{font:600 34px "Cormorant Garamond",serif;margin:0 0 18px}
+.process-flow{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:stretch}
+.process-step{position:relative;border:1px solid #54bfc333;background:#ffffff05;padding:14px 10px;min-height:100px;display:flex;flex-direction:column;justify-content:center}
+.process-step:not(:last-child):after{content:"→";position:absolute;right:-9px;top:40%;z-index:2;color:var(--cyan);font-weight:900}
+.process-step small{color:var(--cyan);font-size:8px;letter-spacing:.14em}.process-step b{margin-top:8px;font:600 17px "Cormorant Garamond",serif}.process-step span{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.4}
 .hero{padding:9vh 0 5vh}.hero small{color:var(--cyan);font-size:9px;letter-spacing:.4em}.hero h1{font:600 clamp(60px,9vw,110px)/.86 "Cormorant Garamond",serif;margin:22px 0}.hero em{color:#8bd5d8;font-weight:500}.hero p{color:#9b9487;max-width:720px;line-height:1.8}
 .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.card{border:1px solid var(--line);background:#ffffff07;padding:30px;min-height:220px}.card h2{font:600 34px "Cormorant Garamond",serif;margin:0 0 12px}.card p{color:#9b9487;line-height:1.7;font-size:13px}.btn{display:inline-block;margin-top:20px;padding:12px 16px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;background:#12303355;font-weight:700;font-size:12px}.flow{display:grid;gap:10px}.step{padding:12px 14px;border-left:2px solid var(--cyan);background:#ffffff05;font-size:12px;color:#bcb6aa}.code{margin-top:24px;color:#67645d;font-size:9px;letter-spacing:.2em}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding-top:6vh}}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding-top:6vh}.process-flow{grid-template-columns:1fr}.process-step:not(:last-child):after{content:"↓";right:14px;top:auto;bottom:-14px}.top{align-items:flex-start}.data-btn{max-width:190px;text-align:center}}
 
 </style>
 <link rel="stylesheet" href="theme.css">
-<script src="theme.js" defer></script>
+<script src="theme.js?v=003" defer></script>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <div class="brand"><div class="icon"><img src="brain-davinci.svg" alt=""></div><div><strong>RUBEN</strong><small>SINIESTROS · DOINGLIO</small></div></div>
-    <a class="back" href="https://duiliomf.github.io/doinglio/">← Volver a DoingLio</a>
+    <a class="data-btn" href="conexion-postgres.html">⚙ Configuración de datos</a>
   </header>
   <main>
     <section class="hero">
@@ -36,24 +43,19 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
       <h1>Ruben<br><em>Siniestros.</em></h1>
       <p>Seguimiento del siniestro desde presupuesto y autorización hasta pedido, reparación, entrega, facturación y cobranza.</p>
     </section>
-    <section class="grid">
-      <div class="card">
-        <h2>Conexión PostgreSQL</h2>
-        <p>La conexión se realiza mediante un conector local. La contraseña no se guarda en GitHub ni se escribe en esta página.</p>
-        <a class="btn" href="conexion-postgres.html">Conectar PostgreSQL →</a>
-      </div>
-      <div class="card">
-        <h2>Circuito</h2>
-        <div class="flow">
-          <div class="step">Presupuesto</div>
-          <div class="step">Autorización / Pedido</div>
-          <div class="step">Reparación</div>
-          <div class="step">Entrega</div>
-          <div class="step">Facturación / Cobranza</div>
-        </div>
+    <section class="process">
+      <h2>Proceso del siniestro hasta el cobro</h2>
+      <div class="process-flow">
+        <div class="process-step"><small>01</small><b>Presupuesto</b><span>Se prepara y envía al cliente/aseguradora.</span></div>
+        <div class="process-step"><small>02</small><b>Autorización</b><span>Presupuesto aceptado para avanzar.</span></div>
+        <div class="process-step"><small>03</small><b>Pedido</b><span>Se genera el pedido de trabajo/repuestos.</span></div>
+        <div class="process-step"><small>04</small><b>Reparación</b><span>Trabajo del siniestro en ejecución.</span></div>
+        <div class="process-step"><small>05</small><b>Entrega</b><span>Se marca entregado cuando se entrega al cliente.</span></div>
+        <div class="process-step"><small>06</small><b>Facturación</b><span>Se emite la factura correspondiente.</span></div>
+        <div class="process-step"><small>07</small><b>Cobro</b><span>Cierre del circuito y cobranza.</span></div>
       </div>
     </section>
-    <div class="code">RUBEN · 002</div>
+    <div class="code">RUBEN · 003</div>
   </main>
 </div>
 
