@@ -14,3 +14,5 @@ Especialista de DoingLio para siniestros.
 ## Flujo inicial
 
 Presupuesto → autorización/pedido → reparación → entrega → facturación/cobranza.
+
+Build inicial preparado para GitHub Pages.
