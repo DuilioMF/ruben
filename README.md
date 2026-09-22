@@ -3,16 +3,14 @@
 <p align="center"><img src="brain-davinci.svg" width="86" alt="Icono cerebro Da Vinci"></p>
 
 [![Ver Trello](https://img.shields.io/badge/VER-TRELLO-0052CC?style=for-the-badge)](https://trello.com/c/oUB73hRq)
-[![Repo Ruben](https://img.shields.io/badge/▶%20REPO-RUBEN-54bfc3?style=for-the-badge)](https://github.com/DuilioMF/ruben)
-[![Volver a DoingLio](https://img.shields.io/badge/←%20VOLVER-DOINGLIO-111111?style=for-the-badge)](https://doinglio.revalsoftia.chatgpt.site/)
-[![Capitán Rodolfo](https://img.shields.io/badge/ABRIR-CAPITÁN%20RODOLFO-c8793f?style=for-the-badge)](https://capitan-rodolfo.revalsoftia.chatgpt.site/)
+[![Abrir Ruben](https://img.shields.io/badge/▶%20ABRIR-RUBEN-54bfc3?style=for-the-badge)](https://duiliomf.github.io/ruben/)
 
 ## Vista rápida
 
 - Portada: `index.html`
 - Conexión PostgreSQL: `conexion-postgres.html`
 - Trello propio: https://trello.com/c/oUB73hRq
-- Estado web: código presente en GitHub; GitHub Pages todavía no habilitado.
+- Web publicada: `https://duiliomf.github.io/ruben/`.
 
 ## Qué es
 
@@ -23,15 +21,14 @@ Especialista de DoingLio para siniestros. Sigue el circuito presupuesto → auto
 - Se abre desde DoingLio.
 - Vive en su repositorio independiente.
 - Usa PostgreSQL mediante un conector local.
-- Debe conservar el botón **← Volver a DoingLio**.
 
 ## Estado
 
 - Repositorio: `DuilioMF/ruben`
 - Rama principal: `main`
 - Fuente inicial: build **001**
-- GitHub Pages objetivo: `https://duiliomf.github.io/ruben/`
-- GitHub Pages: pendiente de habilitación en el repositorio.
+- GitHub Pages: `https://duiliomf.github.io/ruben/`
+- Estado: publicado.
 
 ## Conexión
 
