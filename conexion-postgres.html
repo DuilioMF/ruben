@@ -11,13 +11,18 @@
 label{display:block;color:var(--muted);font-size:12px;margin:8px 0 6px}input{width:100%;background:#0b0d10;border:1px solid #343b43;color:white;padding:12px;border-radius:10px}
 button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,#54bfc3,#86d8da);padding:13px;font-weight:900;cursor:pointer;color:#071012}
 .status{margin-top:15px;padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:13px}.ok{color:#82e3bd}.bad{color:#ffaaaa}
-.note{margin-top:14px;color:#858a91;font-size:12px;line-height:1.6}
+.note{margin-top:14px;color:#858a91;font-size:12px;line-height:1.6}.bridgebox{margin-bottom:18px;padding:14px;border:1px solid #2f353c;border-radius:12px;background:#0d1014}.bridgehead{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;border:1px solid #39424b;color:#a8afb6}.pill.ok{color:#82e3bd;border-color:#2b6650}.pill.bad{color:#ffaaaa;border-color:#6b3434}.bridgebtn{display:inline-block;margin-top:12px;padding:10px 13px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;border-radius:10px;font-size:12px;font-weight:800;background:#12303355}
 @media(max-width:640px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
 </style></head>
 <body>
 <div class="wrap">
-<div class="top"><div><strong>🧠 Ruben · PostgreSQL</strong><div style="color:#7d858d;font-size:12px">Conector local</div></div><a href="index.html">← Volver</a></div>
+<div class="top"><div style="display:flex;align-items:center;gap:12px"><img src="brain-davinci.svg" alt="" style="width:42px;height:42px"><div><strong>Ruben · PostgreSQL</strong><div style="color:#7d858d;font-size:12px">Conector local</div></div></div><a href="index.html">← Volver</a></div>
 <div class="card">
+  <div class="bridgebox">
+    <div class="bridgehead"><div><strong>Ruben local</strong><div class="note" style="margin-top:4px">Servicio esperado en 127.0.0.1:8788</div></div><span id="bridgeState" class="pill">VERIFICANDO</span></div>
+    <a class="bridgebtn" href="RUBEN.bat" download>Descargar RUBEN.bat</a>
+    <div class="note">Ejecutalo una vez. Crea <code>C:\Sistemas\Ruben</code>, instala el driver PostgreSQL si falta y deja el bridge escuchando sólo en tu PC.</div>
+  </div>
   <div class="grid">
     <div class="wide"><label>Servidor / Host</label><input id="host" value="127.0.0.1"></div>
     <div><label>Puerto</label><input id="port" value="5432"></div>
@@ -33,7 +38,32 @@ button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-
 <script>
 const BRIDGE='http://127.0.0.1:8788';
 const statusEl=document.getElementById('status');
+const bridgeState=document.getElementById('bridgeState');
+
+async function checkBridge(){
+  bridgeState.className='pill';
+  bridgeState.textContent='VERIFICANDO';
+  try{
+    const r=await fetch(BRIDGE+'/health',{cache:'no-store'});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok || !d.ok) throw new Error('health');
+    bridgeState.className='pill ok';
+    bridgeState.textContent='ENCENDIDO';
+    statusEl.className='status ok';
+    statusEl.textContent='Conector local listo. Completá los datos PostgreSQL.';
+    return true;
+  }catch(e){
+    bridgeState.className='pill bad';
+    bridgeState.textContent='APAGADO';
+    statusEl.className='status bad';
+    statusEl.textContent='Ruben local no está iniciado. Descargá y ejecutá RUBEN.bat.';
+    return false;
+  }
+}
+
 document.getElementById('connect').onclick=async()=>{
+  const bridgeOk=await checkBridge();
+  if(!bridgeOk) return;
   statusEl.className='status';statusEl.textContent='Conectando…';
   const payload={
     host:document.getElementById('host').value.trim(),
@@ -48,13 +78,14 @@ document.getElementById('connect').onclick=async()=>{
     if(!r.ok) throw new Error(body.error||('HTTP '+r.status));
     sessionStorage.setItem('ruben.pg.sessionId',body.sessionId||'');
     statusEl.className='status ok';
-    statusEl.textContent='PostgreSQL conectado'+(body.serverVersion?' · '+body.serverVersion:'');
+    statusEl.textContent='PostgreSQL conectado'+(body.database?' · '+body.database:'')+(body.user?' · '+body.user:'');
   }catch(e){
     statusEl.className='status bad';
-    statusEl.textContent='No se pudo conectar: '+e.message+'. Verificá que el conector local de Ruben esté iniciado.';
+    statusEl.textContent='No se pudo conectar a PostgreSQL: '+e.message;
   }finally{
     document.getElementById('password').value='';
   }
 };
+checkBridge();
 </script>
 </body></html>
