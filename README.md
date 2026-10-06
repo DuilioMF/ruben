@@ -20,33 +20,30 @@ Especialista de DoingLio para siniestros. Sigue el circuito presupuesto → auto
 
 - Se abre desde DoingLio.
 - Vive en su repositorio independiente.
-- Usa PostgreSQL mediante un conector local.
+- Usa PostgreSQL mediante un workflow de n8n.
 
 ## Estado
 
 - Repositorio: `DuilioMF/ruben`
 - Rama principal: `main`
-- Fuente inicial: build **001**
+- Versión web: **005**
 - GitHub Pages: `https://duiliomf.github.io/ruben/`
 - Estado: publicado.
 
 ## Conexión
 
 - Motor: **PostgreSQL**
-- Bridge local: `127.0.0.1:8788`
-- Arranque Windows: `RUBEN.bat`
-- Carpeta local: `C:\\Sistemas\\Ruben`
-- Driver: `psycopg[binary]`
-- La contraseña se usa sólo durante la conexión y no se guarda en GitHub.
-- El bridge real quedó implementado; falta probarlo contra la PostgreSQL del equipo.
+- Workflow n8n: **RUBEN | Conector PostgreSQL | v1**
+- Webhook: `/webhook/ruben-conector-v1`
+- La credencial PostgreSQL se administra dentro de n8n.
+- La página no solicita ni guarda la contraseña de PostgreSQL.
+- Prueba de conexión verificada con respuesta `connected:true`.
 
 ## Archivos principales
 
 - `index.html`: portada de Ruben.
-- `conexion-postgres.html`: pantalla de conexión PostgreSQL.
-- `RUBEN.bat`: inicia y valida el conector local.
-- `bridge/ruben_local.py`: bridge PostgreSQL local.
-- `.github/workflows/pages.yml`: despliegue preparado para GitHub Pages.
+- `conexion-postgres.html`: estado y prueba de conexión mediante n8n.
+- `theme.css` / `theme.js`: tema compartido.
 
 ## Seguridad
 
@@ -56,8 +53,3 @@ Especialista de DoingLio para siniestros. Sigue el circuito presupuesto → auto
 ## Versionado
 
 Cada cambio debe quedar en un commit recuperable antes de publicar. Conservar rollback.
-
-
-## Publicación vigente — 22/09/2026
-
-GitHub es la fuente de código y GitHub Pages publica `main`. No usar copias de Sites como origen ni destino de navegación. Cada cambio se integra por PR y conserva su commit para rollback. Tema claro/oscuro compartido entre páginas; control arriba y regreso debajo.
