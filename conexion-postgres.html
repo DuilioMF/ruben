@@ -8,89 +8,89 @@
 :root{--bg:#090a0c;--panel:#111318;--line:#2f353c;--cyan:#54bfc3;--text:#f0eee8;--muted:#9ca1a6}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 40% 0,#10282c,#090a0c 45%);color:var(--text);font-family:Segoe UI,Arial,sans-serif;min-height:100vh}
 .wrap{width:min(900px,94vw);margin:32px auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.top a{color:#c9c3b8;text-decoration:none}
-.card{background:#111318ef;border:1px solid var(--line);border-radius:20px;padding:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.wide{grid-column:1/-1}
-label{display:block;color:var(--muted);font-size:12px;margin:8px 0 6px}input{width:100%;background:#0b0d10;border:1px solid #343b43;color:white;padding:12px;border-radius:10px}
+.card{background:#111318ef;border:1px solid var(--line);border-radius:20px;padding:24px}
+.statusbox{padding:18px;border:1px solid #2f353c;border-radius:14px;background:#0d1014}.statushead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pill{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;border:1px solid #39424b;color:#a8afb6}.pill.ok{color:#82e3bd;border-color:#2b6650}.pill.bad{color:#ffaaaa;border-color:#6b3434}
 button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,#54bfc3,#86d8da);padding:13px;font-weight:900;cursor:pointer;color:#071012}
 .status{margin-top:15px;padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:13px}.ok{color:#82e3bd}.bad{color:#ffaaaa}
-.note{margin-top:14px;color:#858a91;font-size:12px;line-height:1.6}.bridgebox{margin-bottom:18px;padding:14px;border:1px solid #2f353c;border-radius:12px;background:#0d1014}.bridgehead{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;border:1px solid #39424b;color:#a8afb6}.pill.ok{color:#82e3bd;border-color:#2b6650}.pill.bad{color:#ffaaaa;border-color:#6b3434}.bridgebtn{display:inline-block;margin-top:12px;padding:10px 13px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;border-radius:10px;font-size:12px;font-weight:800;background:#12303355}
-@media(max-width:640px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
-
-</style><link rel="stylesheet" href="theme.css">
-<script src="theme.js?v=004" defer></script>
+.note{margin-top:14px;color:#858a91;font-size:12px;line-height:1.6}.flow{margin-top:18px;display:grid;gap:10px}.step{padding:12px 14px;border-left:2px solid var(--cyan);background:#ffffff05;font-size:12px;color:#bcb6aa}
+code{color:#8bd5d8}
+</style>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js?v=005" defer></script>
 </head>
 <body>
 <div class="wrap">
-<div class="top"><div style="display:flex;align-items:center;gap:12px"><img src="brain-davinci.svg" alt="" style="width:42px;height:42px"><div><strong>Ruben · PostgreSQL</strong><div style="color:#7d858d;font-size:12px">Conector local</div></div></div><a href="index.html">← Volver</a></div>
-<div class="card">
-  <div class="bridgebox">
-    <div class="bridgehead"><div><strong>Ruben local</strong><div class="note" style="margin-top:4px">Servicio esperado en 127.0.0.1:8788</div></div><span id="bridgeState" class="pill">VERIFICANDO</span></div>
-    <a class="bridgebtn" href="./RUBEN.bat" download="RUBEN.bat" id="downloadRuben">⬇ Descargar e instalar RUBEN.bat</a>
-    <div class="note">Después de descargarlo, abrí <b>RUBEN.bat</b>. El instalador crea <code>C:\\Sistemas\\Ruben</code>, instala el driver PostgreSQL, descarga el conector y deja un log en <code>C:\\Sistemas\\Ruben\\install.log</code>.</div>
+  <div class="top">
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="brain-davinci.svg" alt="" style="width:42px;height:42px">
+      <div><strong>Ruben · PostgreSQL</strong><div style="color:#7d858d;font-size:12px">Conexión administrada por n8n</div></div>
+    </div>
+    <a href="index.html">← Volver</a>
   </div>
-  <div class="grid">
-    <div class="wide"><label>Servidor / Host</label><input id="host" value="127.0.0.1"></div>
-    <div><label>Puerto</label><input id="port" value="5432"></div>
-    <div><label>Base de datos</label><input id="database"></div>
-    <div><label>Usuario</label><input id="user"></div>
-    <div><label>Contraseña</label><input id="password" type="password"></div>
-  </div>
-  <button id="connect">Conectar PostgreSQL</button>
-  <div id="status" class="status">Esperando conexión local en 127.0.0.1:8788.</div>
-  <div class="note">La contraseña sólo se envía al conector local cuando apretás Conectar. Esta pantalla no la guarda.</div>
-</div>
-</div>
-<script>
-const BRIDGE='http://127.0.0.1:8788';
-const statusEl=document.getElementById('status');
-const bridgeState=document.getElementById('bridgeState');
 
-async function checkBridge(){
-  bridgeState.className='pill';
-  bridgeState.textContent='VERIFICANDO';
+  <div class="card">
+    <div class="statusbox">
+      <div class="statushead">
+        <div>
+          <strong>Conector de Ruben</strong>
+          <div class="note" style="margin-top:4px">Workflow n8n: <code>RUBEN | Conector PostgreSQL | v1</code></div>
+        </div>
+        <span id="state" class="pill">VERIFICANDO</span>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="step">1. La página consulta el workflow de Ruben en n8n.</div>
+      <div class="step">2. n8n usa la conexión PostgreSQL configurada allí.</div>
+      <div class="step">3. La contraseña de PostgreSQL no se guarda ni se pide en esta página.</div>
+    </div>
+
+    <button id="test">Probar conexión PostgreSQL</button>
+    <div id="status" class="status">Comprobando conexión…</div>
+    <div class="note">La conexión quedó centralizada en n8n. Ya no hace falta ejecutar un conector local en <code>127.0.0.1:8788</code>.</div>
+  </div>
+</div>
+
+<script>
+const ENDPOINT='https://n8n.srv1251563.hstgr.cloud/webhook/ruben-conector-v1';
+const state=document.getElementById('state');
+const statusEl=document.getElementById('status');
+const btn=document.getElementById('test');
+
+async function check(){
+  state.className='pill';
+  state.textContent='VERIFICANDO';
+  statusEl.className='status';
+  statusEl.textContent='Consultando n8n…';
+  btn.disabled=true;
+
   try{
-    const r=await fetch(BRIDGE+'/health',{cache:'no-store'});
+    const r=await fetch(ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'health'}),
+      cache:'no-store'
+    });
     const d=await r.json().catch(()=>({}));
-    if(!r.ok || !d.ok) throw new Error('health');
-    bridgeState.className='pill ok';
-    bridgeState.textContent='ENCENDIDO';
+    if(!r.ok || d.connected!==true) throw new Error(d.error||('HTTP '+r.status));
+
+    state.className='pill ok';
+    state.textContent='CONECTADO';
     statusEl.className='status ok';
-    statusEl.textContent='Conector local listo. Completá los datos PostgreSQL.';
-    return true;
+    statusEl.textContent='PostgreSQL conectado mediante n8n · '+(d.service||'Ruben')+' · '+(d.version||'v1');
   }catch(e){
-    bridgeState.className='pill bad';
-    bridgeState.textContent='APAGADO';
+    state.className='pill bad';
+    state.textContent='SIN CONEXIÓN';
     statusEl.className='status bad';
-    statusEl.textContent='Ruben local no está iniciado. Descargá y ejecutá RUBEN.bat.';
-    return false;
+    statusEl.textContent='No se pudo verificar PostgreSQL mediante n8n: '+e.message;
+  }finally{
+    btn.disabled=false;
   }
 }
 
-document.getElementById('connect').onclick=async()=>{
-  const bridgeOk=await checkBridge();
-  if(!bridgeOk) return;
-  statusEl.className='status';statusEl.textContent='Conectando…';
-  const payload={
-    host:document.getElementById('host').value.trim(),
-    port:Number(document.getElementById('port').value||5432),
-    database:document.getElementById('database').value.trim(),
-    user:document.getElementById('user').value.trim(),
-    password:document.getElementById('password').value
-  };
-  try{
-    const r=await fetch(BRIDGE+'/api/connect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const body=await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(body.error||('HTTP '+r.status));
-    sessionStorage.setItem('ruben.pg.sessionId',body.sessionId||'');
-    statusEl.className='status ok';
-    statusEl.textContent='PostgreSQL conectado'+(body.database?' · '+body.database:'')+(body.user?' · '+body.user:'');
-  }catch(e){
-    statusEl.className='status bad';
-    statusEl.textContent='No se pudo conectar a PostgreSQL: '+e.message;
-  }finally{
-    document.getElementById('password').value='';
-  }
-};
-checkBridge();
+btn.addEventListener('click',check);
+check();
 </script>
-
-</body></html>
+</body>
+</html>
