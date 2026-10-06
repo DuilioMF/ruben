@@ -17,16 +17,17 @@ button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-
 code{color:#8bd5d8}
 </style>
 <link rel="stylesheet" href="theme.css">
-<script src="theme.js?v=006" defer></script>
+<script src="theme.js?v=007" defer></script>
+<script type="module" src="ruben-auth.js?v=007"></script>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="ruben-app">
   <div class="top">
     <div style="display:flex;align-items:center;gap:12px">
       <img src="brain-davinci.svg" alt="" style="width:42px;height:42px">
       <div><strong>Ruben · PostgreSQL</strong><div style="color:#7d858d;font-size:12px">Conexión administrada por n8n</div></div>
     </div>
-    <a href="index.html">← Volver</a>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><span id="ruben-account" style="color:#8d999e;font-size:10px"></span><button id="ruben-logout" type="button" style="width:auto;margin:0;background:#ffffff08;color:#c9c3b8;border:1px solid #ffffff20;padding:9px 11px">Salir</button><a href="index.html">← Volver</a></div>
   </div>
 
   <div class="card">
@@ -34,7 +35,7 @@ code{color:#8bd5d8}
       <div class="statushead">
         <div>
           <strong>Conector de Ruben</strong>
-          <div class="note" style="margin-top:4px">Workflow n8n: <code>RUBEN | Conector PostgreSQL | v1</code></div>
+          <div class="note" style="margin-top:4px">Workflow n8n: <code>RUBEN | Conector PostgreSQL | v2</code></div>
         </div>
         <span id="state" class="pill">VERIFICANDO</span>
       </div>
@@ -78,7 +79,7 @@ async function check(){
     state.className='pill ok';
     state.textContent='CONECTADO';
     statusEl.className='status ok';
-    statusEl.textContent='PostgreSQL conectado mediante n8n · '+(d.service||'Ruben')+' · '+(d.version||'v1');
+    statusEl.textContent='PostgreSQL conectado mediante n8n · '+(d.service||'Ruben')+' · '+(d.version||'v2');
   }catch(e){
     state.className='pill bad';
     state.textContent='SIN CONEXIÓN';
@@ -90,7 +91,8 @@ async function check(){
 }
 
 btn.addEventListener('click',check);
-check();
+window.addEventListener('ruben:authorized',check);
+setTimeout(()=>{if(window.RubenAuth?.state?.authorized)check()},0);
 </script>
 </body>
 </html>
