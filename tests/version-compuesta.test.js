@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const read=p=>fs.readFileSync(p,'utf8');
 const version=read('VERSION').trim();
-test('Versión única R4',()=>{assert.equal(version,'004');assert.match(read('index.html'),/theme\.js\?v=004/);});
+test('Versión única R5',()=>{assert.equal(version,'005');assert.match(read('index.html'),/theme\.js\?v=004/);});
 test('Todas las pantallas indican versión dinámica',()=>{
   for(const page of ['index.html','conexion-postgres.html']){
     const html=read(page);
