@@ -26,7 +26,7 @@ Especialista de DoingLio para siniestros. Sigue el circuito presupuesto → auto
 
 - Repositorio: `DuilioMF/ruben`
 - Rama principal: `main`
-- Versión web: **005**
+- Versión web: **006**
 - GitHub Pages: `https://duiliomf.github.io/ruben/`
 - Estado: publicado.
 
