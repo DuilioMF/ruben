@@ -25,23 +25,56 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
 .process-step small{color:var(--cyan);font-size:8px;letter-spacing:.14em}.process-step b{margin-top:8px;font:600 17px "Cormorant Garamond",serif}.process-step span{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.4}
 .hero{padding:9vh 0 5vh}.hero small{color:var(--cyan);font-size:9px;letter-spacing:.4em}.hero h1{font:600 clamp(60px,9vw,110px)/.86 "Cormorant Garamond",serif;margin:22px 0}.hero em{color:#8bd5d8;font-weight:500}.hero p{color:#9b9487;max-width:720px;line-height:1.8}
 .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.card{border:1px solid var(--line);background:#ffffff07;padding:30px;min-height:220px}.card h2{font:600 34px "Cormorant Garamond",serif;margin:0 0 12px}.card p{color:#9b9487;line-height:1.7;font-size:13px}.btn{display:inline-block;margin-top:20px;padding:12px 16px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;background:#12303355;font-weight:700;font-size:12px}.flow{display:grid;gap:10px}.step{padding:12px 14px;border-left:2px solid var(--cyan);background:#ffffff05;font-size:12px;color:#bcb6aa}.code{margin-top:24px;color:#67645d;font-size:9px;letter-spacing:.2em}
+
+.top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}.account{color:#8d999e;font-size:10px}.logout-btn{border:1px solid #ffffff20;background:#ffffff07;color:#c8c1b3;padding:10px 12px;cursor:pointer;font-weight:700}
+.company-panel{margin:0 0 22px;border:1px solid #54bfc34a;background:linear-gradient(135deg,#54bfc30d,#ffffff04);padding:24px}
+.company-head{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap}.company-head small{display:block;color:var(--cyan);font-size:8px;letter-spacing:.22em}.company-head h2{font:600 30px "Cormorant Garamond",serif;margin:7px 0 0}.company-switch{display:grid;gap:6px;min-width:min(360px,100%)}.company-switch label{font-size:9px;color:#8d999e;letter-spacing:.12em}.company-switch select{border:1px solid #54bfc355;background:#0d1014;color:#efe8d8;padding:11px 12px;min-width:280px}
+.company-status{margin-top:14px;color:#8d999e;font-size:11px}.company-status.ok{color:#82e3bd}.company-status.bad{color:#ffaaaa}
+.company-card{margin-top:16px;border-top:1px solid #ffffff14;padding-top:18px}.company-card h3{font:600 28px "Cormorant Garamond",serif;margin:0 0 14px}.company-data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.company-field{border:1px solid #ffffff10;background:#00000018;padding:12px}.company-field small{display:block;color:#718086;font-size:8px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}.company-field b{font-size:12px;font-weight:600;word-break:break-word}
+@media(max-width:850px){.company-data{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start}.top-actions{justify-content:flex-start}}
+@media(max-width:520px){.company-data{grid-template-columns:1fr}.company-switch,.company-switch select{width:100%;min-width:0}}
+
 @media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding-top:6vh}.process-flow{grid-template-columns:1fr}.process-step:not(:last-child):after{content:"↓";right:14px;top:auto;bottom:-14px}.top{align-items:flex-start}.data-btn{max-width:190px;text-align:center}}
 
 </style>
 <link rel="stylesheet" href="theme.css">
-<script src="theme.js?v=006" defer></script>
+<script src="theme.js?v=007" defer></script>
+<script type="module" src="ruben-auth.js?v=007"></script>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="ruben-app">
   <header class="top">
     <div class="brand"><div class="icon"><img src="brain-davinci.svg" alt=""></div><div><strong>RUBEN</strong><small>SINIESTROS · DOINGLIO</small></div></div>
-    <a class="data-btn" href="conexion-postgres.html">⚙ Configuración de datos</a>
+    <div class="top-actions"><span id="ruben-account" class="account"></span><button id="ruben-logout" class="logout-btn" type="button">Salir</button><a class="data-btn" href="conexion-postgres.html">⚙ Configuración de datos</a></div>
   </header>
   <main>
     <section class="hero">
       <small>ESPECIALISTA 02</small>
       <h1>Ruben<br><em>Siniestros.</em></h1>
       <p>Seguimiento del siniestro desde presupuesto y autorización hasta pedido, reparación, entrega, facturación y cobranza.</p>
+    </section>
+    <section class="company-panel" id="company-panel">
+      <div class="company-head">
+        <div><small>EMPRESA ACTIVA</small><h2>Compañía de trabajo</h2></div>
+        <div class="company-switch">
+          <label for="company-select">Saltar entre compañías</label>
+          <select id="company-select" disabled><option>Cargando compañías…</option></select>
+        </div>
+      </div>
+      <div id="company-status" class="company-status">Esperando acceso autorizado…</div>
+      <div id="company-card" class="company-card" hidden>
+        <h3 id="company-name"></h3>
+        <div class="company-data">
+          <div class="company-field"><small>Razón social</small><b id="company-fiscal"></b></div>
+          <div class="company-field"><small>CUIT</small><b id="company-document"></b></div>
+          <div class="company-field"><small>IIBB</small><b id="company-gross"></b></div>
+          <div class="company-field"><small>Inicio</small><b id="company-start"></b></div>
+          <div class="company-field"><small>Ciudad</small><b id="company-city"></b></div>
+          <div class="company-field"><small>Domicilio</small><b id="company-address"></b></div>
+          <div class="company-field"><small>Teléfono</small><b id="company-phone"></b></div>
+          <div class="company-field"><small>Email</small><b id="company-email"></b></div>
+        </div>
+      </div>
     </section>
     <section class="process">
       <h2>Proceso del siniestro hasta el cobro</h2>
@@ -58,6 +91,92 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
     <div class="code">RUBEN · comprobando versión</div>
   </main>
 </div>
+
+
+<script>
+(function(){
+  const select=document.getElementById('company-select');
+  const status=document.getElementById('company-status');
+  const card=document.getElementById('company-card');
+  let companies=[];
+
+  const fields={
+    name:document.getElementById('company-name'),
+    fiscal:document.getElementById('company-fiscal'),
+    document:document.getElementById('company-document'),
+    gross:document.getElementById('company-gross'),
+    start:document.getElementById('company-start'),
+    city:document.getElementById('company-city'),
+    address:document.getElementById('company-address'),
+    phone:document.getElementById('company-phone'),
+    email:document.getElementById('company-email')
+  };
+  const safe=v=>String(v||'').trim()||'—';
+  function render(company){
+    if(!company){card.hidden=true;return}
+    card.hidden=false;
+    fields.name.textContent=safe(company.name);
+    fields.fiscal.textContent=safe(company.fiscal_name);
+    fields.document.textContent=safe(company.document);
+    fields.gross.textContent=safe(company.gross_income);
+    fields.start.textContent=safe(company.start_date);
+    fields.city.textContent=safe(company.city);
+    fields.address.textContent=safe(company.address);
+    fields.phone.textContent=safe(company.phone);
+    fields.email.textContent=safe(company.email);
+  }
+  async function load(){
+    if(!window.RubenAuth?.state?.authorized)return;
+    select.disabled=true;
+    status.className='company-status';
+    status.textContent='Leyendo compañías desde PostgreSQL…';
+    try{
+      const data=await window.RubenAuth.invoke('companies');
+      companies=Array.isArray(data.companies)?data.companies:[];
+      select.innerHTML='';
+      for(const company of companies){
+        const option=document.createElement('option');
+        option.value=String(company.id);
+        option.textContent=company.name||company.fiscal_name||('Compañía '+company.id);
+        option.selected=Number(data.selected_company_id)===Number(company.id);
+        select.appendChild(option);
+      }
+      select.disabled=companies.length<2;
+      render(data.active_company||companies[0]||null);
+      status.className='company-status ok';
+      status.textContent=companies.length
+        ? (companies.length===1?'1 compañía disponible.':'Tenés '+companies.length+' compañías disponibles. Podés cambiar arriba.')
+        : 'No hay compañías disponibles.';
+    }catch(error){
+      status.className='company-status bad';
+      status.textContent=error.message||'No pude cargar las compañías.';
+      select.innerHTML='<option>Sin datos</option>';
+      select.disabled=true;
+      card.hidden=true;
+    }
+  }
+  select.addEventListener('change',async()=>{
+    const id=Number(select.value);
+    if(!Number.isFinite(id))return;
+    select.disabled=true;
+    status.className='company-status';
+    status.textContent='Cambiando compañía…';
+    try{
+      const data=await window.RubenAuth.invoke('select_company',{company_id:id});
+      render(data.active_company);
+      status.className='company-status ok';
+      status.textContent='Compañía activa: '+safe(data.active_company?.name);
+    }catch(error){
+      status.className='company-status bad';
+      status.textContent=error.message||'No pude cambiar la compañía.';
+    }finally{
+      select.disabled=companies.length<2;
+    }
+  });
+  window.addEventListener('ruben:authorized',load);
+  setTimeout(()=>{if(window.RubenAuth?.state?.authorized)load()},0);
+})();
+</script>
 
 </body>
 </html>
