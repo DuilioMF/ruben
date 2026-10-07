@@ -14,14 +14,14 @@ window.RubenAuth={sb,state,invoke,check,logout};
 const style=document.createElement('style');
 style.textContent=`
 body:not(.ruben-authorized) #ruben-app{visibility:hidden}
-#ruben-auth-shell{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 50% 25%,#12353a,#090a0c 48%,#070809)}
+#ruben-auth-shell{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 50% 25%,#0b2f4f,#071522 48%,#06111c)}
 body.ruben-authorized #ruben-auth-shell{display:none}
-.ruben-auth-card{width:min(560px,94vw);border:1px solid #54bfc355;background:#0d1014f2;border-radius:24px;padding:34px;box-shadow:0 40px 120px #0009}
+.ruben-auth-card{width:min(560px,94vw);border:1px solid #d7ad5555;background:#0b2032f2;border-radius:24px;padding:34px;box-shadow:0 40px 120px #0009}
 .ruben-auth-brand{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.2em}.ruben-auth-brand img{width:36px;height:36px}
-.ruben-auth-kicker{margin-top:28px;color:#54bfc3;font-size:9px;letter-spacing:.22em}.ruben-auth-card h2{font:600 46px/1 "Cormorant Garamond",Georgia,serif;margin:10px 0 14px}
-.ruben-auth-copy{color:#9ca1a6;line-height:1.7;font-size:13px}.ruben-auth-form{display:flex;gap:9px;margin-top:20px}
+.ruben-auth-kicker{margin-top:28px;color:#d7ad55;font-size:9px;letter-spacing:.22em}.ruben-auth-card h2{font:600 46px/1 "Cormorant Garamond",Georgia,serif;margin:10px 0 14px}
+.ruben-auth-copy{color:#91a2b1;line-height:1.7;font-size:13px}.ruben-auth-form{display:flex;gap:9px;margin-top:20px}
 .ruben-auth-form input{flex:1;min-width:0;border:1px solid #ffffff22;background:#ffffff08;color:#f0eee8;border-radius:12px;padding:14px}
-.ruben-auth-form button,.ruben-auth-btn{border:1px solid #54bfc366;background:#54bfc31b;color:#dff9fa;border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer}
+.ruben-auth-form button,.ruben-auth-btn{border:1px solid #d7ad5566;background:#d7ad551b;color:#fff4d0;border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer}
 .ruben-auth-status{min-height:24px;margin-top:13px;color:#aab0b6;font-size:12px;line-height:1.5}.ruben-auth-status.error{color:#ffaaaa}.ruben-auth-status.ok{color:#82e3bd}
 .ruben-auth-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.ruben-auth-note{margin-top:18px;padding-top:15px;border-top:1px solid #ffffff15;color:#777f86;font-size:10px;line-height:1.6}
 @media(max-width:560px){.ruben-auth-form{flex-direction:column}.ruben-auth-card{padding:28px 22px}.ruben-auth-card h2{font-size:40px}}
@@ -32,7 +32,7 @@ const shell=document.createElement('section');
 shell.id='ruben-auth-shell';
 shell.innerHTML=`
 <div class="ruben-auth-card">
-  <div class="ruben-auth-brand"><img src="ruben-siniestros.svg" alt="Ruben Siniestros"><span>DOINGLIO · RUBEN</span></div>
+  <div class="ruben-auth-brand"><img src="ruben-siniestros.svg" alt="Ruben Siniestros"><span>DOINGLIO · RUBEN · RUSSO</span></div>
   <div class="ruben-auth-kicker" id="ruben-auth-kicker">ACCESO CONTROLADO</div>
   <h2 id="ruben-auth-title">Entrá con tu mail.</h2>
   <p class="ruben-auth-copy" id="ruben-auth-copy">Te enviamos un enlace seguro. La primera vez tu cuenta queda inactiva hasta que sea habilitada.</p>
