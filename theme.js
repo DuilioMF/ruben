@@ -1,15 +1,21 @@
 (function(){
- const controls=document.createElement('nav');controls.className='site-controls';controls.setAttribute('aria-label','Tema, estilo y navegación');
- const themeButton=document.createElement('button');themeButton.type='button';
- const styleSelect=document.createElement('select');styleSelect.setAttribute('aria-label','Estilo visual');
+ const controls=document.createElement('nav');
+ controls.className='site-controls';
+ controls.setAttribute('aria-label','Tema, estilo y navegación');
+
+ const themeButton=document.createElement('button');
+ themeButton.type='button';
+
+ const styleSelect=document.createElement('select');
+ styleSelect.setAttribute('aria-label','Estilo visual');
  styleSelect.innerHTML='<option value="russo">Estilo: Russo</option><option value="davinci">Estilo: Da Vinci</option>';
 
  function applyTheme(theme,save){
    document.documentElement.dataset.theme=theme;
    if(save){try{localStorage.setItem('doinglio.theme',theme)}catch(_){}}
    const light=theme==='light';
-   themeButton.textContent=light?'🌙 Activar oscuro':'☀ Activar claro';
-   themeButton.setAttribute('aria-label',themeButton.textContent);
+   themeButton.textContent=light?'🌙 Oscuro':'☀ Claro';
+   themeButton.setAttribute('aria-label',light?'Activar oscuro':'Activar claro');
    document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#eaf1f6':'#071522');
  }
  function applyStyle(style,save){
@@ -18,21 +24,22 @@
    styleSelect.value=value;
    if(save){try{localStorage.setItem('doinglio.style',value)}catch(_){}}
  }
+
  themeButton.onclick=()=>applyTheme(document.documentElement.dataset.theme==='light'?'dark':'light',true);
  styleSelect.onchange=()=>applyStyle(styleSelect.value,true);
  controls.append(themeButton,styleSelect);
 
- let oldBack=document.querySelector('a.doinglio-home,a.back,.top a[href="index.html"]');
- if(!oldBack){
-   oldBack=document.createElement('a');
-   oldBack.href='https://duiliomf.github.io/doinglio/';
-   oldBack.target='_self';
-   oldBack.textContent='← Volver a DoingLio';
-   oldBack.setAttribute('aria-label','Volver a DoingLio');
- }
- oldBack.className='control-back';
- controls.appendChild(oldBack);
- document.body.appendChild(controls);
+ const back=document.createElement('a');
+ back.href='https://duiliomf.github.io/doinglio/';
+ back.target='_self';
+ back.textContent='← DoingLio';
+ back.setAttribute('aria-label','Volver a DoingLio');
+ back.className='control-back';
+ controls.appendChild(back);
+
+ const host=document.querySelector('.top-actions')||document.querySelector('.top')||document.body;
+ host.appendChild(controls);
+
  applyStyle(document.documentElement.dataset.style||'russo',false);
  applyTheme(document.documentElement.dataset.theme==='light'?'light':'dark',false);
 })();
