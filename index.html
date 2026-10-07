@@ -1,108 +1,158 @@
 <!doctype html>
 <html lang="es">
 <head>
-<script data-doinglio-theme-init>(function(){try{document.documentElement.dataset.theme=localStorage.getItem('doinglio.theme')||'dark'}catch(_){document.documentElement.dataset.theme='dark'}})();</script>
+<script data-doinglio-theme-init>(function(){try{document.documentElement.dataset.theme=localStorage.getItem('doinglio.theme')||'dark';document.documentElement.dataset.style=localStorage.getItem('doinglio.style')||'russo'}catch(_){document.documentElement.dataset.theme='dark';document.documentElement.dataset.style='russo'}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090907">
-<title>Ruben · Siniestros</title>
+<meta name="theme-color" content="#071522">
+<title>Ruben · Siniestros · Russo</title>
 <link rel="icon" href="ruben-siniestros.svg" type="image/svg+xml">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Inter:wght@400;500;600;700&display=swap');
-:root{--bg:#080807;--ink:#efe8d8;--muted:#9b9487;--cyan:#54bfc3;--line:#ffffff18}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
-body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#100f0c 35%,#080807 72%)}
-.wrap{width:min(1050px,92vw);margin:auto;padding:30px 0 70px}
-.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:22px}
-.brand{display:flex;gap:14px;align-items:center}.icon{width:54px;height:54px;display:grid;place-items:center}.icon img{width:54px;height:54px;display:block;filter:drop-shadow(0 0 10px #d9823b22)}
-.brand strong{display:block;letter-spacing:.22em}.brand small{color:#7d999b;font-size:9px;letter-spacing:.2em}
-.back{color:#c8c1b3;text-decoration:none;font-size:12px}
-.data-btn{display:inline-block;padding:12px 16px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;background:#12303355;font-weight:700;font-size:12px}
-.process{margin-top:22px;border:1px solid var(--line);background:#ffffff04;padding:24px}
-.process h2{font:600 34px "Cormorant Garamond",serif;margin:0 0 18px}
-.process-flow{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:stretch}
-.process-step{position:relative;border:1px solid #54bfc333;background:#ffffff05;padding:14px 10px;min-height:100px;display:flex;flex-direction:column;justify-content:center}
-.process-step:not(:last-child):after{content:"→";position:absolute;right:-9px;top:40%;z-index:2;color:var(--cyan);font-weight:900}
-.process-step small{color:var(--cyan);font-size:8px;letter-spacing:.14em}.process-step b{margin-top:8px;font:600 17px "Cormorant Garamond",serif}.process-step span{margin-top:5px;color:var(--muted);font-size:10px;line-height:1.4}
-.hero{padding:9vh 0 5vh}.hero small{color:var(--cyan);font-size:9px;letter-spacing:.4em}.hero h1{font:600 clamp(60px,9vw,110px)/.86 "Cormorant Garamond",serif;margin:22px 0}.hero em{color:#8bd5d8;font-weight:500}.hero p{color:#9b9487;max-width:720px;line-height:1.8}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.card{border:1px solid var(--line);background:#ffffff07;padding:30px;min-height:220px}.card h2{font:600 34px "Cormorant Garamond",serif;margin:0 0 12px}.card p{color:#9b9487;line-height:1.7;font-size:13px}.btn{display:inline-block;margin-top:20px;padding:12px 16px;border:1px solid #54bfc370;color:#dff9fa;text-decoration:none;background:#12303355;font-weight:700;font-size:12px}.flow{display:grid;gap:10px}.step{padding:12px 14px;border-left:2px solid var(--cyan);background:#ffffff05;font-size:12px;color:#bcb6aa}.code{margin-top:24px;color:#67645d;font-size:9px;letter-spacing:.2em}
-
-.top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}.account{color:#8d999e;font-size:10px}.logout-btn{border:1px solid #ffffff20;background:#ffffff07;color:#c8c1b3;padding:10px 12px;cursor:pointer;font-weight:700}
-.company-panel{margin:0 0 22px;border:1px solid #54bfc34a;background:linear-gradient(135deg,#54bfc30d,#ffffff04);padding:24px}
-.company-head{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap}.company-head small{display:block;color:var(--cyan);font-size:8px;letter-spacing:.22em}.company-head h2{font:600 30px "Cormorant Garamond",serif;margin:7px 0 0}.company-switch{display:grid;gap:6px;min-width:min(360px,100%)}.company-switch label{font-size:9px;color:#8d999e;letter-spacing:.12em}.company-switch select{border:1px solid #54bfc355;background:#0d1014;color:#efe8d8;padding:11px 12px;min-width:280px}
-.company-status{margin-top:14px;color:#8d999e;font-size:11px}.company-status.ok{color:#82e3bd}.company-status.bad{color:#ffaaaa}
-.company-card{margin-top:16px;border-top:1px solid #ffffff14;padding-top:18px}.company-card h3{font:600 28px "Cormorant Garamond",serif;margin:0 0 14px}.company-data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.company-field{border:1px solid #ffffff10;background:#00000018;padding:12px}.company-field small{display:block;color:#718086;font-size:8px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}.company-field b{font-size:12px;font-weight:600;word-break:break-word}
-@media(max-width:850px){.company-data{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start}.top-actions{justify-content:flex-start}}
-@media(max-width:520px){.company-data{grid-template-columns:1fr}.company-switch,.company-switch select{width:100%;min-width:0}}
-
-@media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding-top:6vh}.process-flow{grid-template-columns:1fr}.process-step:not(:last-child):after{content:"↓";right:14px;top:auto;bottom:-14px}.top{align-items:flex-start}.data-btn{max-width:190px;text-align:center}}
-
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#071522;--panel:#0b2032;--panel2:#0d2940;--ink:#f4efe2;--muted:#91a2b1;
+  --blue:#1b5f8b;--blue2:#2e79a9;--gold:#d7ad55;--gold2:#f0d488;--line:#d7ad5538;
+  --good:#6fd6ad;--bad:#ff9c9c;
+}
+html[data-style="davinci"]{--bg:#080807;--panel:#11110f;--panel2:#171510;--blue:#54bfc3;--blue2:#8bd5d8;--gold:#d9823b;--gold2:#efb271;--line:#ffffff18}
+html[data-theme="light"][data-style="russo"]{--bg:#eaf1f6;--panel:#fffaf0;--panel2:#f5ead5;--ink:#14283b;--muted:#5d7081;--blue:#18547d;--blue2:#2e79a9;--gold:#9d7423;--gold2:#c79a3c;--line:#9d74234a}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+body{min-height:100vh;background:
+  radial-gradient(circle at 12% 0%,color-mix(in srgb,var(--blue) 24%,transparent),transparent 34%),
+  radial-gradient(circle at 88% 12%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 30%),
+  var(--bg)}
+.wrap{width:min(1380px,94vw);margin:auto;padding:26px 0 80px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:0 0 20px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:14px}.brand img{width:58px;height:58px;filter:drop-shadow(0 0 16px #d7ad5544)}
+.brand strong{display:block;font-size:17px;letter-spacing:.22em}.brand small{display:block;margin-top:5px;color:var(--gold2);font-size:9px;letter-spacing:.2em}
+.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.account{font-size:10px;color:var(--muted)}.top-actions button,.top-actions a{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:10px 12px;text-decoration:none;font-weight:700;cursor:pointer}
+.hero{padding:42px 0 24px;display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:end}
+.hero-kicker{color:var(--gold2);font-size:10px;letter-spacing:.34em;font-weight:800}
+.hero h1{font:700 clamp(54px,7vw,104px)/.88 "Cormorant Garamond",serif;margin:14px 0 12px;letter-spacing:-.03em}
+.hero h1 em{font-style:normal;color:var(--gold2)}.hero p{margin:0;color:var(--muted);max-width:720px;line-height:1.7;font-size:13px}
+.filters{display:grid;grid-template-columns:1fr 180px auto;gap:10px;border:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--panel) 94%,transparent),color-mix(in srgb,var(--blue) 11%,var(--panel)));padding:16px}
+.filter label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.17em;margin-bottom:7px;font-weight:800}
+.filter select,.filter input{width:100%;height:44px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 11px;font:600 12px Inter}
+.refresh{align-self:end;height:44px;border:1px solid var(--gold);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#102030;font-weight:900;padding:0 16px;cursor:pointer}
+.status{min-height:24px;padding:0 0 15px;color:var(--muted);font-size:12px}.status.ok{color:var(--good)}.status.bad{color:var(--bad)}
+.period{border-top:1px solid var(--line);padding:24px 0 6px}
+.period-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:14px}
+.period-head small{color:var(--gold2);font-size:9px;letter-spacing:.24em;font-weight:800}.period-head h2{margin:5px 0 0;font:700 36px "Cormorant Garamond",serif}
+.period-date{color:var(--muted);font-size:11px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.metric{position:relative;min-height:190px;padding:18px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel),color-mix(in srgb,var(--blue) 10%,var(--panel)));overflow:hidden}
+.metric:after{content:"";position:absolute;width:110px;height:110px;border:1px solid color-mix(in srgb,var(--gold) 22%,transparent);border-radius:50%;right:-48px;top:-48px}
+.metric .label{position:relative;z-index:1;color:var(--gold2);font-size:9px;letter-spacing:.18em;font-weight:800;text-transform:uppercase}
+.metric .value{position:relative;z-index:1;margin-top:18px;font:700 clamp(46px,5vw,74px)/.85 "Cormorant Garamond",serif;color:var(--ink)}
+.metric .amount{position:relative;z-index:1;margin-top:16px;color:var(--muted);font-size:12px;font-weight:600}
+.metric.total{background:linear-gradient(145deg,color-mix(in srgb,var(--gold) 14%,var(--panel)),var(--panel))}
+.metric.total .value{color:var(--gold2);font-size:clamp(34px,4.4vw,62px)}
+.state-strip{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.state-pill{border:1px solid color-mix(in srgb,var(--blue2) 55%,transparent);background:color-mix(in srgb,var(--blue) 12%,var(--panel));padding:8px 10px;color:var(--muted);font-size:10px}
+.flow{margin-top:24px;border:1px solid var(--line);padding:18px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
+.flow small{color:var(--gold2);font-size:8px;letter-spacing:.2em}.flow-line{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:12px}.flow-line span{font-size:11px;color:var(--ink)}.flow-line b{color:var(--gold)}
+.company-details{margin-top:24px;border-top:1px solid var(--line);padding-top:14px}.company-details summary{cursor:pointer;color:var(--gold2);font-size:11px;font-weight:800;letter-spacing:.12em}
+.company-data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}.company-field{border:1px solid var(--line);background:var(--panel);padding:11px}.company-field small{display:block;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}.company-field b{font-size:11px;word-break:break-word}
+.code{margin-top:22px;color:var(--muted);font-size:9px;letter-spacing:.18em}
+@media(max-width:1050px){.hero{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.filters{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
+@media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}}
 </style>
 <link rel="stylesheet" href="theme.css">
-<script src="theme.js?v=009" defer></script>
-<script type="module" src="ruben-auth.js?v=009"></script>
+<script src="theme.js?v=010" defer></script>
+<script type="module" src="ruben-auth.js?v=010"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
   <header class="top">
-    <div class="brand"><div class="icon"><img src="ruben-siniestros.svg" alt="Ruben Siniestros"></div><div><strong>RUBEN</strong><small>SINIESTROS · DOINGLIO</small></div></div>
-    <div class="top-actions"><span id="ruben-account" class="account"></span><button id="ruben-logout" class="logout-btn" type="button">Salir</button><a class="data-btn" href="conexion-postgres.html">⚙ Configuración de datos</a></div>
+    <div class="brand">
+      <img src="ruben-siniestros.svg" alt="Ruben Siniestros">
+      <div><strong>RUBEN</strong><small>SINIESTROS · RUSSO</small></div>
+    </div>
+    <div class="top-actions">
+      <span id="ruben-account" class="account"></span>
+      <button id="ruben-logout" type="button">Salir</button>
+      <a href="conexion-postgres.html">Configuración de datos</a>
+    </div>
   </header>
+
   <main>
     <section class="hero">
-      <small>ESPECIALISTA 02</small>
-      <h1>Ruben<br><em>Siniestros.</em></h1>
-      <p>Seguimiento del siniestro desde presupuesto y autorización hasta pedido, reparación, entrega, facturación y cobranza.</p>
-    </section>
-    <section class="company-panel" id="company-panel">
-      <div class="company-head">
-        <div><small>EMPRESA ACTIVA</small><h2>Compañía de trabajo</h2></div>
-        <div class="company-switch">
-          <label for="company-select">Saltar entre compañías</label>
+      <div>
+        <div class="hero-kicker">RUSSO · TABLERO OPERATIVO</div>
+        <h1>Ruben <em>Siniestros.</em></h1>
+        <p>Lectura real de PostgreSQL desde public.ventas_pedidas_facturadas. Los estados se muestran sin duplicar registros y siempre filtrados por la compañía activa.</p>
+      </div>
+      <div class="filters">
+        <div class="filter">
+          <label for="company-select">SALTAR ENTRE COMPAÑÍAS</label>
           <select id="company-select" disabled><option>Cargando compañías…</option></select>
         </div>
-      </div>
-      <div id="company-status" class="company-status">Esperando acceso autorizado…</div>
-      <div id="company-card" class="company-card" hidden>
-        <h3 id="company-name"></h3>
-        <div class="company-data">
-          <div class="company-field"><small>Razón social</small><b id="company-fiscal"></b></div>
-          <div class="company-field"><small>CUIT</small><b id="company-document"></b></div>
-          <div class="company-field"><small>IIBB</small><b id="company-gross"></b></div>
-          <div class="company-field"><small>Inicio</small><b id="company-start"></b></div>
-          <div class="company-field"><small>Ciudad</small><b id="company-city"></b></div>
-          <div class="company-field"><small>Domicilio</small><b id="company-address"></b></div>
-          <div class="company-field"><small>Teléfono</small><b id="company-phone"></b></div>
-          <div class="company-field"><small>Email</small><b id="company-email"></b></div>
+        <div class="filter">
+          <label for="dashboard-date">FECHA</label>
+          <input id="dashboard-date" type="date">
         </div>
+        <button id="dashboard-refresh" class="refresh" type="button">Actualizar</button>
       </div>
     </section>
-    <section class="process">
-      <h2>Proceso del siniestro hasta el cobro</h2>
-      <div class="process-flow">
-        <div class="process-step"><small>01</small><b>Presupuesto</b><span>Se prepara y envía al cliente/aseguradora.</span></div>
-        <div class="process-step"><small>02</small><b>Autorización</b><span>Presupuesto aceptado para avanzar.</span></div>
-        <div class="process-step"><small>03</small><b>Pedido</b><span>Se genera el pedido de trabajo/repuestos.</span></div>
-        <div class="process-step"><small>04</small><b>Reparación</b><span>Trabajo del siniestro en ejecución.</span></div>
-        <div class="process-step"><small>05</small><b>Entrega</b><span>Se marca entregado cuando se entrega al cliente.</span></div>
-        <div class="process-step"><small>06</small><b>Facturación</b><span>Se emite la factura correspondiente.</span></div>
-        <div class="process-step"><small>07</small><b>Cobro</b><span>Cierre del circuito y cobranza.</span></div>
+
+    <div id="dashboard-status" class="status">Esperando acceso autorizado…</div>
+
+    <section class="period">
+      <div class="period-head">
+        <div><small>LECTURA DIARIA</small><h2>Hoy</h2></div>
+        <div id="day-date" class="period-date"></div>
+      </div>
+      <div id="day-metrics" class="metrics"></div>
+      <div id="day-states" class="state-strip"></div>
+    </section>
+
+    <section class="period">
+      <div class="period-head">
+        <div><small>LECTURA MENSUAL</small><h2>Mes</h2></div>
+        <div id="month-date" class="period-date"></div>
+      </div>
+      <div id="month-metrics" class="metrics"></div>
+      <div id="month-states" class="state-strip"></div>
+    </section>
+
+    <section class="flow">
+      <small>CIRCUITO RUBEN</small>
+      <div class="flow-line">
+        <span>Presupuesto</span><b>→</b><span>Pedido / Trabajo</span><b>→</b><span>Terminado</span><b>→</b><span>Entregado</span><b>→</b><span>Factura</span><b>→</b><span>Por cobrar</span><b>→</b><span>Cobrado</span>
       </div>
     </section>
-    <div class="code">RUBEN · comprobando versión</div>
+
+    <details class="company-details">
+      <summary>DATOS DE LA COMPAÑÍA ACTIVA</summary>
+      <div id="company-card" class="company-data" hidden>
+        <div class="company-field"><small>Razón social</small><b id="company-fiscal"></b></div>
+        <div class="company-field"><small>CUIT</small><b id="company-document"></b></div>
+        <div class="company-field"><small>IIBB</small><b id="company-gross"></b></div>
+        <div class="company-field"><small>Inicio</small><b id="company-start"></b></div>
+        <div class="company-field"><small>Ciudad</small><b id="company-city"></b></div>
+        <div class="company-field"><small>Domicilio</small><b id="company-address"></b></div>
+        <div class="company-field"><small>Teléfono</small><b id="company-phone"></b></div>
+        <div class="company-field"><small>Email</small><b id="company-email"></b></div>
+      </div>
+    </details>
+
+    <div class="code" id="ruben-version">RUBEN · comprobando versión</div>
   </main>
 </div>
-
 
 <script>
 (function(){
   const select=document.getElementById('company-select');
-  const status=document.getElementById('company-status');
+  const dateInput=document.getElementById('dashboard-date');
+  const refresh=document.getElementById('dashboard-refresh');
+  const status=document.getElementById('dashboard-status');
   const card=document.getElementById('company-card');
   let companies=[];
 
   const fields={
-    name:document.getElementById('company-name'),
     fiscal:document.getElementById('company-fiscal'),
     document:document.getElementById('company-document'),
     gross:document.getElementById('company-gross'),
@@ -112,11 +162,18 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
     phone:document.getElementById('company-phone'),
     email:document.getElementById('company-email')
   };
-  const safe=v=>String(v||'').trim()||'—';
-  function render(company){
+
+  const safe=v=>String(v??'').trim()||'—';
+  const money=v=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(Number(v||0));
+  const localISO=()=>{
+    const d=new Date(), off=d.getTimezoneOffset();
+    return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
+  };
+  dateInput.value=localISO();
+
+  function renderCompany(company){
     if(!company){card.hidden=true;return}
     card.hidden=false;
-    fields.name.textContent=safe(company.name);
     fields.fiscal.textContent=safe(company.fiscal_name);
     fields.document.textContent=safe(company.document);
     fields.gross.textContent=safe(company.gross_income);
@@ -126,11 +183,93 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
     fields.phone.textContent=safe(company.phone);
     fields.email.textContent=safe(company.email);
   }
-  async function load(){
+
+  function norm(s){
+    return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  }
+  function summarize(rows){
+    const out={};
+    for(const row of rows){
+      const key=norm(row.estado);
+      if(!out[key])out[key]={estado:String(row.estado),cantidad:0,total:0};
+      out[key].cantidad+=Number(row.cantidad||0);
+      out[key].total+=Number(row.total||0);
+    }
+    return Object.values(out);
+  }
+  function pick(list,matcher){
+    const found=list.filter(x=>matcher(norm(x.estado)));
+    return found.reduce((a,x)=>({cantidad:a.cantidad+x.cantidad,total:a.total+x.total}),{cantidad:0,total:0});
+  }
+  function metric(label,data,kind='count'){
+    const el=document.createElement('article');
+    el.className='metric'+(kind==='total'?' total':'');
+    const value=kind==='money'?money(data.total):String(data.cantidad);
+    el.innerHTML='<div class="label">'+label+'</div><div class="value">'+value+'</div><div class="amount">'+
+      (kind==='money'?(data.cantidad+' movimientos'):money(data.total))+'</div>';
+    return el;
+  }
+  function renderPeriod(period,rows){
+    const list=summarize(rows.filter(r=>r.period===period));
+    const target=document.getElementById(period==='day'?'day-metrics':'month-metrics');
+    const strip=document.getElementById(period==='day'?'day-states':'month-states');
+    target.innerHTML='';strip.innerHTML='';
+
+    const presupuesto=pick(list,s=>s.includes('presup'));
+    const pedido=pick(list,s=>s.includes('pedido'));
+    const facturado=pick(list,s=>s.includes('factur')&&!s.includes('sin factur'));
+    const porCobrar=pick(list,s=>s.includes('sin factur')||s.includes('por cobrar')||s.includes('pendiente'));
+    const total=list.reduce((a,x)=>({cantidad:a.cantidad+x.cantidad,total:a.total+x.total}),{cantidad:0,total:0});
+
+    target.append(
+      metric('Presupuestos',presupuesto),
+      metric('Pedidos',pedido),
+      metric('Facturados',facturado),
+      metric('Por cobrar / Sin facturar',porCobrar),
+      metric('Total movimientos',total),
+      metric('Importe total',total,'money')
+    );
+
+    for(const item of list){
+      const p=document.createElement('span');p.className='state-pill';
+      p.textContent=item.estado+' · '+item.cantidad+' · '+money(item.total);
+      strip.appendChild(p);
+    }
+    if(!list.length){
+      const p=document.createElement('span');p.className='state-pill';p.textContent='Sin movimientos para este período';strip.appendChild(p);
+    }
+  }
+
+  async function loadDashboard(){
+    if(!window.RubenAuth?.state?.authorized)return;
+    const date=dateInput.value||localISO();
+    refresh.disabled=true;select.disabled=true;
+    status.className='status';status.textContent='Leyendo día y mes desde PostgreSQL…';
+    try{
+      const data=await window.RubenAuth.invoke('dashboard',{date});
+      const rows=Array.isArray(data.rows)?data.rows:[];
+      renderCompany(data.active_company);
+      renderPeriod('day',rows);
+      renderPeriod('month',rows);
+      const dt=new Date(date+'T12:00:00');
+      document.getElementById('day-date').textContent=new Intl.DateTimeFormat('es-AR',{dateStyle:'full'}).format(dt);
+      document.getElementById('month-date').textContent=new Intl.DateTimeFormat('es-AR',{month:'long',year:'numeric'}).format(dt);
+      status.className='status ok';
+      status.textContent='Datos actualizados · '+safe(data.active_company?.name)+' · '+safe(date);
+    }catch(error){
+      status.className='status bad';
+      status.textContent=error.message||'No pude cargar el tablero.';
+      renderPeriod('day',[]);renderPeriod('month',[]);
+    }finally{
+      refresh.disabled=false;
+      select.disabled=companies.length<2;
+    }
+  }
+
+  async function loadCompanies(){
     if(!window.RubenAuth?.state?.authorized)return;
     select.disabled=true;
-    status.className='company-status';
-    status.textContent='Leyendo compañías desde PostgreSQL…';
+    status.className='status';status.textContent='Leyendo compañías…';
     try{
       const data=await window.RubenAuth.invoke('companies');
       companies=Array.isArray(data.companies)?data.companies:[];
@@ -142,42 +281,34 @@ body{min-height:100vh;background:radial-gradient(circle at 58% 24%,#11262a 0,#10
         option.selected=Number(data.selected_company_id)===Number(company.id);
         select.appendChild(option);
       }
+      renderCompany(data.active_company||companies[0]||null);
       select.disabled=companies.length<2;
-      render(data.active_company||companies[0]||null);
-      status.className='company-status ok';
-      status.textContent=companies.length
-        ? (companies.length===1?'1 compañía disponible.':'Tenés '+companies.length+' compañías disponibles. Podés cambiar arriba.')
-        : 'No hay compañías disponibles.';
+      await loadDashboard();
     }catch(error){
-      status.className='company-status bad';
+      status.className='status bad';
       status.textContent=error.message||'No pude cargar las compañías.';
       select.innerHTML='<option>Sin datos</option>';
       select.disabled=true;
-      card.hidden=true;
     }
   }
+
   select.addEventListener('change',async()=>{
-    const id=Number(select.value);
-    if(!Number.isFinite(id))return;
+    const id=Number(select.value);if(!Number.isFinite(id))return;
     select.disabled=true;
-    status.className='company-status';
-    status.textContent='Cambiando compañía…';
+    status.className='status';status.textContent='Cambiando compañía…';
     try{
       const data=await window.RubenAuth.invoke('select_company',{company_id:id});
-      render(data.active_company);
-      status.className='company-status ok';
-      status.textContent='Compañía activa: '+safe(data.active_company?.name);
+      renderCompany(data.active_company);
+      await loadDashboard();
     }catch(error){
-      status.className='company-status bad';
-      status.textContent=error.message||'No pude cambiar la compañía.';
-    }finally{
-      select.disabled=companies.length<2;
-    }
+      status.className='status bad';status.textContent=error.message||'No pude cambiar la compañía.';
+    }finally{select.disabled=companies.length<2}
   });
-  window.addEventListener('ruben:authorized',load);
-  setTimeout(()=>{if(window.RubenAuth?.state?.authorized)load()},0);
+  dateInput.addEventListener('change',loadDashboard);
+  refresh.addEventListener('click',loadDashboard);
+  window.addEventListener('ruben:authorized',loadCompanies);
+  setTimeout(()=>{if(window.RubenAuth?.state?.authorized)loadCompanies()},0);
 })();
 </script>
-
 </body>
 </html>
