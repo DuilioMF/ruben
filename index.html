@@ -49,6 +49,22 @@ body{min-height:100vh;background:
 .metric .amount{position:relative;z-index:1;margin-top:16px;color:var(--muted);font-size:12px;font-weight:600}
 .metric.total{background:linear-gradient(145deg,color-mix(in srgb,var(--gold) 14%,var(--panel)),var(--panel))}
 .metric.total .value{color:var(--gold2);font-size:clamp(34px,4.4vw,62px)}
+.metric.clickable{cursor:pointer;transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.metric.clickable:hover{transform:translateY(-2px);border-color:var(--gold);background:linear-gradient(160deg,var(--panel2),color-mix(in srgb,var(--gold) 8%,var(--panel)))}
+.metric.clickable:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.metric .open-hint{position:absolute;right:14px;bottom:12px;color:var(--gold2);font-size:9px;letter-spacing:.12em;font-weight:800}
+.finance-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 10px;padding-top:16px;border-top:1px dashed var(--line)}
+.finance-head span:first-child{color:var(--gold2);font-size:9px;letter-spacing:.2em;font-weight:800}
+.finance-head span:last-child{color:var(--muted);font-size:10px}
+.detail-modal{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;padding:24px;background:#02070dbd;backdrop-filter:blur(6px)}
+.detail-modal[hidden]{display:none}
+.detail-card{width:min(1080px,96vw);max-height:84vh;overflow:hidden;border:1px solid var(--gold);background:var(--bg);box-shadow:0 30px 100px #000b}
+.detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.detail-head small{display:block;color:var(--gold2);font-size:8px;letter-spacing:.18em;margin-bottom:5px}.detail-head h3{margin:0;font:700 30px "Cormorant Garamond",serif}
+.detail-close{border:1px solid var(--line);background:transparent;color:var(--ink);width:38px;height:38px;font-size:20px;cursor:pointer}
+.detail-body{overflow:auto;max-height:calc(84vh - 86px)}
+.detail-status{padding:14px 18px;color:var(--muted);font-size:11px}
+.detail-table{width:100%;border-collapse:collapse;font-size:11px}.detail-table th,.detail-table td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.detail-table th{position:sticky;top:0;background:var(--panel2);color:var(--gold2);font-size:8px;letter-spacing:.12em;text-transform:uppercase}.detail-table td.amount{text-align:right;font-weight:700;white-space:nowrap}.detail-table td.balance{text-align:right;color:var(--gold2);white-space:nowrap}
 .state-strip{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .state-pill{border:1px solid color-mix(in srgb,var(--blue2) 55%,transparent);background:color-mix(in srgb,var(--blue) 12%,var(--panel));padding:8px 10px;color:var(--muted);font-size:10px}
 .flow{margin-top:24px;border:1px solid var(--line);padding:18px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
@@ -60,9 +76,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}}
 </style>
-<link rel="stylesheet" href="theme.css?v=010&h=2">
-<script src="theme.js?v=010&h=2" defer></script>
-<script type="module" src="ruben-auth.js?v=010"></script>
+<link rel="stylesheet" href="theme.css?v=010&h=4">
+<script src="theme.js?v=010&h=4" defer></script>
+<script type="module" src="ruben-auth.js?v=010&h=4"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -107,6 +123,8 @@ body{min-height:100vh;background:
       </div>
       <div id="day-metrics" class="metrics"></div>
       <div id="day-states" class="state-strip"></div>
+      <div class="finance-head"><span>COMPRAS Y GASTOS</span><span>Comprobantes · deuda · pagos</span></div>
+      <div id="day-finance" class="metrics finance-metrics"></div>
     </section>
 
     <section class="period">
@@ -116,6 +134,8 @@ body{min-height:100vh;background:
       </div>
       <div id="month-metrics" class="metrics"></div>
       <div id="month-states" class="state-strip"></div>
+      <div class="finance-head"><span>COMPRAS Y GASTOS</span><span>Comprobantes · deuda · pagos</span></div>
+      <div id="month-finance" class="metrics finance-metrics"></div>
     </section>
 
     <section class="flow">
@@ -124,6 +144,22 @@ body{min-height:100vh;background:
         <span>Presupuesto</span><b>→</b><span>Pedido / Trabajo</span><b>→</b><span>Terminado</span><b>→</b><span>Entregado</span><b>→</b><span>Factura</span><b>→</b><span>Por cobrar</span><b>→</b><span>Cobrado</span>
       </div>
     </section>
+
+    <div id="detail-modal" class="detail-modal" hidden>
+      <section class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <div class="detail-head">
+          <div><small id="detail-kicker">DETALLE</small><h3 id="detail-title">Comprobantes</h3></div>
+          <button id="detail-close" class="detail-close" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <div class="detail-body">
+          <div id="detail-status" class="detail-status">Cargando…</div>
+          <table class="detail-table">
+            <thead><tr><th>Fecha</th><th>Comprobante</th><th>Cliente / Proveedor</th><th>Importe</th><th>Saldo / Estado</th></tr></thead>
+            <tbody id="detail-rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
 
     <details class="company-details">
       <summary>DATOS DE LA COMPAÑÍA ACTIVA</summary>
@@ -150,6 +186,12 @@ body{min-height:100vh;background:
   const refresh=document.getElementById('dashboard-refresh');
   const status=document.getElementById('dashboard-status');
   const card=document.getElementById('company-card');
+  const modal=document.getElementById('detail-modal');
+  const modalTitle=document.getElementById('detail-title');
+  const modalKicker=document.getElementById('detail-kicker');
+  const modalStatus=document.getElementById('detail-status');
+  const modalRows=document.getElementById('detail-rows');
+  const modalClose=document.getElementById('detail-close');
   let companies=[];
 
   const fields={
@@ -201,12 +243,21 @@ body{min-height:100vh;background:
     const found=list.filter(x=>matcher(norm(x.estado)));
     return found.reduce((a,x)=>({cantidad:a.cantidad+x.cantidad,total:a.total+x.total}),{cantidad:0,total:0});
   }
-  function metric(label,data,kind='count'){
+  function metric(label,data,kind='count',clickInfo=null){
     const el=document.createElement('article');
-    el.className='metric'+(kind==='total'?' total':'');
+    el.className='metric'+(kind==='total'?' total':'')+(clickInfo?' clickable':'');
+    if(clickInfo){el.tabIndex=0;el.setAttribute('role','button')}
     const value=kind==='money'?money(data.total):String(data.cantidad);
     el.innerHTML='<div class="label">'+label+'</div><div class="value">'+value+'</div><div class="amount">'+
-      (kind==='money'?(data.cantidad+' movimientos'):money(data.total))+'</div>';
+      (kind==='money'?(data.cantidad+' movimientos'):money(data.total))+'</div>'+
+      (clickInfo?'<div class="open-hint">VER COMPROBANTES →</div>':'');
+    if(clickInfo){
+      const open=()=>clickInfo.type==='sales'
+        ?openSalesDetail(clickInfo.period,clickInfo.estado,label)
+        :openFinanceDetail(clickInfo.period,clickInfo.metric,label);
+      el.addEventListener('click',open);
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+    }
     return el;
   }
   function renderPeriod(period,rows){
@@ -222,9 +273,9 @@ body{min-height:100vh;background:
     const total=list.reduce((a,x)=>({cantidad:a.cantidad+x.cantidad,total:a.total+x.total}),{cantidad:0,total:0});
 
     target.append(
-      metric('Presupuestos',presupuesto),
-      metric('Pedidos',pedido),
-      metric('Facturados',facturado),
+      metric('Presupuestos',presupuesto,'count',{type:'sales',period,estado:'Presupuesto'}),
+      metric('Pedidos',pedido,'count',{type:'sales',period,estado:'Pedido'}),
+      metric('Facturados',facturado,'count',{type:'sales',period,estado:'Facturado'}),
       metric('Por cobrar / Sin facturar',porCobrar),
       metric('Total movimientos',total),
       metric('Importe total',total,'money')
@@ -240,6 +291,63 @@ body{min-height:100vh;background:
     }
   }
 
+  function renderFinance(period,rows){
+    const target=document.getElementById(period==='day'?'day-finance':'month-finance');
+    target.innerHTML='';
+    const get=metricName=>{
+      const row=rows.find(r=>r.period===period&&r.metric===metricName);
+      return row?{cantidad:Number(row.cantidad||0),total:Number(row.total||0)}:{cantidad:0,total:0};
+    };
+    target.append(
+      metric('Compras y Gastos',get('compras_gastos'),'count',{type:'finance',period,metric:'compras_gastos'}),
+      metric('Pendiente de pago',get('pendiente_pago'),'count',{type:'finance',period,metric:'pendiente_pago'}),
+      metric('Pagado',get('pagado'),'count',{type:'finance',period,metric:'pagado'})
+    );
+  }
+
+  function showDetail(title,kicker,items,finance=false){
+    modalTitle.textContent=title;
+    modalKicker.textContent=kicker;
+    modalRows.innerHTML='';
+    modalStatus.textContent=items.length?items.length+' comprobante'+(items.length===1?'':'s'):'Sin comprobantes para este período';
+    for(const item of items){
+      const tr=document.createElement('tr');
+      const party=finance?safe(item.tercero):safe(item.cliente);
+      const last=finance
+        ? (Number(item.saldo||0)!==0?money(item.saldo):safe(item.tipo||'Pagado'))
+        : safe(item.estado);
+      const vals=[safe(item.fecha),safe(item.comprobante),party,money(item.total),last];
+      vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===3)td.className='amount';if(i===4)td.className='balance';tr.appendChild(td)});
+      modalRows.appendChild(tr);
+    }
+    modal.hidden=false;
+    document.body.style.overflow='hidden';
+  }
+  function closeDetail(){modal.hidden=true;document.body.style.overflow=''}
+  modalClose.addEventListener('click',closeDetail);
+  modal.addEventListener('click',e=>{if(e.target===modal)closeDetail()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeDetail()});
+
+  async function openSalesDetail(period,estado,label){
+    const date=dateInput.value||localISO();
+    modal.hidden=false;document.body.style.overflow='hidden';
+    modalTitle.textContent=label;modalKicker.textContent=(period==='day'?'DÍA':'MES')+' · COMPROBANTES';modalRows.innerHTML='';modalStatus.textContent='Cargando comprobantes…';
+    try{
+      const data=await window.RubenAuth.invoke('sales_detail',{date,period,estado});
+      showDetail(label,(period==='day'?'DÍA':'MES')+' · '+safe(data.active_company?.name),Array.isArray(data.items)?data.items:[],false);
+    }catch(error){modalStatus.textContent=error.message||'No pude cargar los comprobantes.'}
+  }
+
+  async function openFinanceDetail(period,metricName,label){
+    const date=dateInput.value||localISO();
+    modal.hidden=false;document.body.style.overflow='hidden';
+    modalTitle.textContent=label;modalKicker.textContent=(period==='day'?'DÍA':'MES')+' · COMPRAS Y PAGOS';modalRows.innerHTML='';modalStatus.textContent='Cargando comprobantes…';
+    try{
+      const data=await window.RubenAuth.invoke('finance_detail',{date,period,metric:metricName});
+      showDetail(label,(period==='day'?'DÍA':'MES')+' · '+safe(data.active_company?.name),Array.isArray(data.items)?data.items:[],true);
+    }catch(error){modalStatus.textContent=error.message||'No pude cargar el detalle.'}
+  }
+
   async function loadDashboard(){
     if(!window.RubenAuth?.state?.authorized)return;
     const date=dateInput.value||localISO();
@@ -251,6 +359,15 @@ body{min-height:100vh;background:
       renderCompany(data.active_company);
       renderPeriod('day',rows);
       renderPeriod('month',rows);
+      try{
+        const finance=await window.RubenAuth.invoke('finance_summary',{date});
+        const financeRows=Array.isArray(finance.rows)?finance.rows:[];
+        renderFinance('day',financeRows);
+        renderFinance('month',financeRows);
+      }catch(_){
+        renderFinance('day',[]);
+        renderFinance('month',[]);
+      }
       const dt=new Date(date+'T12:00:00');
       const today=localISO();
       document.getElementById('day-title').textContent=date===today?'Hoy':'Día seleccionado';
@@ -261,7 +378,7 @@ body{min-height:100vh;background:
     }catch(error){
       status.className='status bad';
       status.textContent=error.message||'No pude cargar el tablero.';
-      renderPeriod('day',[]);renderPeriod('month',[]);
+      renderPeriod('day',[]);renderPeriod('month',[]);renderFinance('day',[]);renderFinance('month',[]);
     }finally{
       refresh.disabled=false;
       select.disabled=companies.length<2;
