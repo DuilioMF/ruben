@@ -32,7 +32,7 @@ const shell=document.createElement('section');
 shell.id='ruben-auth-shell';
 shell.innerHTML=`
 <div class="ruben-auth-card">
-  <div class="ruben-auth-brand"><img src="brain-davinci.svg" alt=""><span>DOINGLIO · RUBEN</span></div>
+  <div class="ruben-auth-brand"><img src="ruben-siniestros.svg" alt="Ruben Siniestros"><span>DOINGLIO · RUBEN</span></div>
   <div class="ruben-auth-kicker" id="ruben-auth-kicker">ACCESO CONTROLADO</div>
   <h2 id="ruben-auth-title">Entrá con tu mail.</h2>
   <p class="ruben-auth-copy" id="ruben-auth-copy">Te enviamos un enlace seguro. La primera vez tu cuenta queda inactiva hasta que sea habilitada.</p>
