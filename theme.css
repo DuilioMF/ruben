@@ -2,7 +2,7 @@
 /* Navegación común: tema arriba, regreso debajo. */
 body{padding-top:112px!important}
 .site-controls{position:fixed;top:10px;right:14px;z-index:11000;display:flex;flex-direction:column;align-items:stretch;gap:6px;max-width:calc(100vw - 28px)}
-.site-controls button,.site-controls a{position:static!important;display:block!important;width:auto!important;margin:0!important;padding:10px 14px!important;border:1px solid #9a784c!important;border-radius:10px!important;background:#19140f!important;color:#f5ead7!important;font:600 13px/1.25 system-ui!important;text-decoration:none;cursor:pointer;box-shadow:0 3px 12px #0003}
+.site-controls button,.site-controls select,.site-controls a{position:static!important;display:block!important;width:auto!important;margin:0!important;padding:10px 14px!important;border:1px solid #9a784c!important;border-radius:10px!important;background:#19140f!important;color:#f5ead7!important;font:600 13px/1.25 system-ui!important;text-decoration:none;cursor:pointer;box-shadow:0 3px 12px #0003}
 .site-controls :focus-visible{outline:3px solid #df8b34;outline-offset:2px}
 html[data-theme="light"]{--bg:#f3ecdf;--paper:#fffaf2;--panel:#fffaf2;--card:#fffaf2;--ink:#30271d;--text:#30271d;--muted:#665a4b;--line:#c6b494;--cyan:#176a70;--green:#166a44}
 html[data-theme="light"] body{background:radial-gradient(circle at 55% 20%,#fffaf2,#eee4d3 80%)!important;color:#30271d!important}
@@ -16,3 +16,18 @@ html[data-theme="light"] input,html[data-theme="light"] select{background:#fff!i
 html[data-theme="light"] .site-controls button,html[data-theme="light"] .site-controls a,html[data-theme="light"] .btn,html[data-theme="light"] .bridgebtn,html[data-theme="light"] .back,html[data-theme="light"] .top a{background:#fff7e9!important;color:#563a19!important;border-color:#aa9471!important}
 html[data-theme="light"] .ok{color:#166a44!important}html[data-theme="light"] .bad{color:#a52020!important}
 html[data-theme="light"] .num{color:#ab987c55!important}
+
+html[data-style="russo"] .site-controls button,
+html[data-style="russo"] .site-controls select,
+html[data-style="russo"] .site-controls a{
+  border-color:#d7ad55!important;
+  background:#0b2032!important;
+  color:#f4efe2!important;
+}
+html[data-theme="light"][data-style="russo"] .site-controls button,
+html[data-theme="light"][data-style="russo"] .site-controls select,
+html[data-theme="light"][data-style="russo"] .site-controls a{
+  background:#fffaf0!important;
+  color:#14283b!important;
+  border-color:#9d7423!important;
+}
