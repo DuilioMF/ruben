@@ -25,7 +25,7 @@ test('Todas las pantallas de Ruben requieren acceso autorizado',()=>{
   assert.ok(auth.includes('active'));
 });
 
-test('R7 carga y permite cambiar compañías',()=>{
+test('Ruben carga y permite cambiar compañías',()=>{
   const html=read('index.html');
   assert.match(html,/id="company-select"/);
   assert.match(html,/Saltar entre compañías/);
