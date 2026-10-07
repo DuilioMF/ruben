@@ -4,16 +4,19 @@ const fs=require('node:fs');
 const read=p=>fs.readFileSync(p,'utf8');
 const version=read('VERSION').trim();
 
-test('Versión única R7',()=>{
-  assert.equal(version,'007');
-  assert.match(read('index.html'),/theme\.js\?v=007/);
-  assert.match(read('index.html'),/ruben-auth\.js\?v=007/);
+test('Versión única según VERSION',()=>{
+  assert.match(version,/^\d+$/);
+  for(const page of ['index.html','conexion-postgres.html']){
+    const html=read(page);
+    assert.match(html,new RegExp('theme\\.js\\?v='+version));
+    assert.match(html,new RegExp('ruben-auth\\.js\\?v='+version));
+  }
 });
 
 test('Todas las pantallas de Ruben requieren acceso autorizado',()=>{
   for(const page of ['index.html','conexion-postgres.html']){
     const html=read(page);
-    assert.match(html,/ruben-auth\.js\?v=007/);
+    assert.match(html,new RegExp('ruben-auth\\.js\\?v='+version));
     assert.match(html,/id="ruben-app"/);
     assert.doesNotMatch(html,/Rubén|RUBÉN|rubén/);
   }
