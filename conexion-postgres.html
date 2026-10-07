@@ -6,20 +6,20 @@
 <title>Ruben · PostgreSQL</title>
 <link rel="icon" href="ruben-siniestros.svg" type="image/svg+xml">
 <style>
-:root{--bg:#090a0c;--panel:#111318;--line:#2f353c;--cyan:#54bfc3;--text:#f0eee8;--muted:#9ca1a6}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 40% 0,#10282c,#090a0c 45%);color:var(--text);font-family:Segoe UI,Arial,sans-serif;min-height:100vh}
+:root{--bg:#071522;--panel:#0b2032;--line:#2f353c;--cyan:#d7ad55;--text:#f0eee8;--muted:#9ca1a6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 40% 0,#0b2f4f,#071522 45%);color:var(--text);font-family:Segoe UI,Arial,sans-serif;min-height:100vh}
 .wrap{width:min(900px,94vw);margin:32px auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.top a{color:#c9c3b8;text-decoration:none}
-.card{background:#111318ef;border:1px solid var(--line);border-radius:20px;padding:24px}
-.statusbox{padding:18px;border:1px solid #2f353c;border-radius:14px;background:#0d1014}.statushead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.card{background:#0b2032ef;border:1px solid var(--line);border-radius:20px;padding:24px}
+.statusbox{padding:18px;border:1px solid #2f353c;border-radius:14px;background:#0d2940}.statushead{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .pill{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;border:1px solid #39424b;color:#a8afb6}.pill.ok{color:#82e3bd;border-color:#2b6650}.pill.bad{color:#ffaaaa;border-color:#6b3434}
-button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,#54bfc3,#86d8da);padding:13px;font-weight:900;cursor:pointer;color:#071012}
+button{margin-top:18px;width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,#d7ad55,#f0d488);padding:13px;font-weight:900;cursor:pointer;color:#071012}
 .status{margin-top:15px;padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:13px}.ok{color:#82e3bd}.bad{color:#ffaaaa}
 .note{margin-top:14px;color:#858a91;font-size:12px;line-height:1.6}.flow{margin-top:18px;display:grid;gap:10px}.step{padding:12px 14px;border-left:2px solid var(--cyan);background:#ffffff05;font-size:12px;color:#bcb6aa}
 code{color:#8bd5d8}
 </style>
 <link rel="stylesheet" href="theme.css">
-<script src="theme.js?v=009" defer></script>
-<script type="module" src="ruben-auth.js?v=009"></script>
+<script src="theme.js?v=010" defer></script>
+<script type="module" src="ruben-auth.js?v=010"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -36,7 +36,7 @@ code{color:#8bd5d8}
       <div class="statushead">
         <div>
           <strong>Conector de Ruben</strong>
-          <div class="note" style="margin-top:4px">Workflow n8n: <code>RUBEN | Conector PostgreSQL | v2</code></div>
+          <div class="note" style="margin-top:4px">Workflow n8n: <code>RUBEN | Conector PostgreSQL | v3 R10</code></div>
         </div>
         <span id="state" class="pill">VERIFICANDO</span>
       </div>
@@ -80,7 +80,7 @@ async function check(){
     state.className='pill ok';
     state.textContent='CONECTADO';
     statusEl.className='status ok';
-    statusEl.textContent='PostgreSQL conectado mediante n8n · '+(d.service||'Ruben')+' · '+(d.version||'v2');
+    statusEl.textContent='PostgreSQL conectado mediante n8n · '+(d.service||'Ruben')+' · '+(d.version||'v3-r10');
   }catch(e){
     state.className='pill bad';
     state.textContent='SIN CONEXIÓN';
