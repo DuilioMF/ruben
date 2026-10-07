@@ -102,7 +102,7 @@ body{min-height:100vh;background:
 
     <section class="period">
       <div class="period-head">
-        <div><small>LECTURA DIARIA</small><h2>Hoy</h2></div>
+        <div><small>LECTURA DIARIA</small><h2 id="day-title">Hoy</h2></div>
         <div id="day-date" class="period-date"></div>
       </div>
       <div id="day-metrics" class="metrics"></div>
@@ -252,6 +252,8 @@ body{min-height:100vh;background:
       renderPeriod('day',rows);
       renderPeriod('month',rows);
       const dt=new Date(date+'T12:00:00');
+      const today=localISO();
+      document.getElementById('day-title').textContent=date===today?'Hoy':'Día seleccionado';
       document.getElementById('day-date').textContent=new Intl.DateTimeFormat('es-AR',{dateStyle:'full'}).format(dt);
       document.getElementById('month-date').textContent=new Intl.DateTimeFormat('es-AR',{month:'long',year:'numeric'}).format(dt);
       status.className='status ok';
