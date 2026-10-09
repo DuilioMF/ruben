@@ -364,17 +364,22 @@ body{min-height:100vh;background:
         const financeRows=Array.isArray(finance.rows)?finance.rows:[];
         renderFinance('day',financeRows);
         renderFinance('month',financeRows);
-      }catch(_){
+      }catch(error){
         renderFinance('day',[]);
         renderFinance('month',[]);
+        status.className='status bad';
+        status.textContent='Compras y pagos: no se pudieron cargar. '+(error?.message||'Error de consulta a PostgreSQL.')+' Los valores en cero no están verificados.';
+        console.error('Ruben finance_summary',error);
       }
       const dt=new Date(date+'T12:00:00');
       const today=localISO();
       document.getElementById('day-title').textContent=date===today?'Hoy':'Día seleccionado';
       document.getElementById('day-date').textContent=new Intl.DateTimeFormat('es-AR',{dateStyle:'full'}).format(dt);
       document.getElementById('month-date').textContent=new Intl.DateTimeFormat('es-AR',{month:'long',year:'numeric'}).format(dt);
-      status.className='status ok';
-      status.textContent='Datos actualizados · '+safe(data.active_company?.name)+' · '+safe(date);
+      if(!status.classList.contains('bad')){
+        status.className='status ok';
+        status.textContent='Datos actualizados · '+safe(data.active_company?.name)+' · '+safe(date);
+      }
     }catch(error){
       status.className='status bad';
       status.textContent=error.message||'No pude cargar el tablero.';
