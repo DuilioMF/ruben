@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: "22"
       - name: Comprobar versiones y páginas
-        run: node --test tests/version-compuesta.test.js
+        run: node --test tests/*.test.js
