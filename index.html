@@ -65,6 +65,13 @@ body{min-height:100vh;background:
 .detail-body{overflow:auto;max-height:calc(84vh - 86px)}
 .detail-status{padding:14px 18px;color:var(--muted);font-size:11px}
 .detail-table{width:100%;border-collapse:collapse;font-size:11px}.detail-table th,.detail-table td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.detail-table th{position:sticky;top:0;background:var(--panel2);color:var(--gold2);font-size:8px;letter-spacing:.12em;text-transform:uppercase}.detail-table td.amount{text-align:right;font-weight:700;white-space:nowrap}.detail-table td.balance{text-align:right;color:var(--gold2);white-space:nowrap}
+.detail-table tbody tr.invoice-row{cursor:pointer}
+.detail-table tbody tr.invoice-row:hover{background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.invoice-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.invoice-summary div{border:1px solid var(--line);background:var(--panel);padding:10px}
+.invoice-summary small{display:block;color:var(--muted);font-size:8px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.invoice-summary b{font-size:12px}
+.invoice-section{padding:16px 18px}.invoice-section h4{margin:0 0 10px;color:var(--gold2);font:700 22px "Cormorant Garamond",serif}
 .state-strip{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .state-pill{border:1px solid color-mix(in srgb,var(--blue2) 55%,transparent);background:color-mix(in srgb,var(--blue) 12%,var(--panel));padding:8px 10px;color:var(--muted);font-size:10px}
 .flow{margin-top:24px;border:1px solid var(--line);padding:18px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
@@ -76,9 +83,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}}
 </style>
-<link rel="stylesheet" href="theme.css?v=010&h=4">
-<script src="theme.js?v=010&h=4" defer></script>
-<script type="module" src="ruben-auth.js?v=010&h=4"></script>
+<link rel="stylesheet" href="theme.css?v=010&h=5">
+<script src="theme.js?v=010&h=5" defer></script>
+<script type="module" src="ruben-auth.js?v=010&h=5"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -153,10 +160,11 @@ body{min-height:100vh;background:
         </div>
         <div class="detail-body">
           <div id="detail-status" class="detail-status">Cargando…</div>
-          <table class="detail-table">
+          <table id="detail-table" class="detail-table">
             <thead><tr><th>Fecha</th><th>Comprobante</th><th>Cliente / Proveedor</th><th>Importe</th><th>Saldo / Estado</th></tr></thead>
             <tbody id="detail-rows"></tbody>
           </table>
+          <div id="detail-extra" hidden></div>
         </div>
       </section>
     </div>
@@ -191,6 +199,8 @@ body{min-height:100vh;background:
   const modalKicker=document.getElementById('detail-kicker');
   const modalStatus=document.getElementById('detail-status');
   const modalRows=document.getElementById('detail-rows');
+  const detailTable=document.getElementById('detail-table');
+  const detailExtra=document.getElementById('detail-extra');
   const modalClose=document.getElementById('detail-close');
   let companies=[];
 
@@ -299,7 +309,8 @@ body{min-height:100vh;background:
       return row?{cantidad:Number(row.cantidad||0),total:Number(row.total||0)}:{cantidad:0,total:0};
     };
     target.append(
-      metric('Compras y Gastos',get('compras_gastos'),'count',{type:'finance',period,metric:'compras_gastos'}),
+      metric('Insumos',get('insumos'),'count',{type:'finance',period,metric:'insumos'}),
+      metric('Gastos',get('gastos'),'count',{type:'finance',period,metric:'gastos'}),
       metric('Pendiente de pago',get('pendiente_pago'),'count',{type:'finance',period,metric:'pendiente_pago'}),
       metric('Pagado',get('pagado'),'count',{type:'finance',period,metric:'pagado'})
     );
@@ -309,9 +320,20 @@ body{min-height:100vh;background:
     modalTitle.textContent=title;
     modalKicker.textContent=kicker;
     modalRows.innerHTML='';
+    detailTable.hidden=false;
+    detailExtra.hidden=true;
+    detailExtra.innerHTML='';
     modalStatus.textContent=items.length?items.length+' comprobante'+(items.length===1?'':'s'):'Sin comprobantes para este período';
     for(const item of items){
       const tr=document.createElement('tr');
+      if(finance && Number(item.account_invoice_id||0)>0){
+        tr.className='invoice-row';
+        tr.tabIndex=0;
+        tr.setAttribute('role','button');
+        const open=()=>openPurchaseInvoice(Number(item.account_invoice_id));
+        tr.addEventListener('click',open);
+        tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+      }
       const party=finance?safe(item.tercero):safe(item.cliente);
       const last=finance
         ? (Number(item.saldo||0)!==0?money(item.saldo):safe(item.tipo||'Pagado'))
@@ -338,10 +360,80 @@ body{min-height:100vh;background:
     }catch(error){modalStatus.textContent=error.message||'No pude cargar los comprobantes.'}
   }
 
+  function appendInfo(parent,label,value){
+    const box=document.createElement('div');
+    const s=document.createElement('small');s.textContent=label;
+    const b=document.createElement('b');b.textContent=value;
+    box.append(s,b);parent.appendChild(box);
+  }
+  function makeDetailTable(headers,rows){
+    const table=document.createElement('table');table.className='detail-table';
+    const thead=document.createElement('thead'),trh=document.createElement('tr');
+    headers.forEach(h=>{const th=document.createElement('th');th.textContent=h;trh.appendChild(th)});
+    thead.appendChild(trh);table.appendChild(thead);
+    const tbody=document.createElement('tbody');
+    rows.forEach(row=>{
+      const tr=document.createElement('tr');
+      row.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i>=row.length-2)td.className='amount';tr.appendChild(td)});
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);return table;
+  }
+  async function openPurchaseInvoice(accountInvoiceId){
+    modalTitle.textContent='Detalle de compra';
+    modalKicker.textContent='FACTURA · PRODUCTOS · PAGOS';
+    modalStatus.textContent='Cargando factura…';
+    modalRows.innerHTML='';
+    detailTable.hidden=true;
+    detailExtra.hidden=false;
+    detailExtra.innerHTML='';
+    try{
+      const data=await window.RubenAuth.invoke('purchase_invoice_detail',{account_invoice_id:accountInvoiceId});
+      const f=data.factura||{};
+      const comprobante=[safe(f.letra),safe(f.sucursal),safe(f.numero)].filter(x=>x!=='—').join('-')||'—';
+      modalTitle.textContent=comprobante;
+      modalStatus.textContent=safe(f.razon_social)+' · '+safe(f.fecha);
+      const summary=document.createElement('div');summary.className='invoice-summary';
+      appendInfo(summary,'Tipo',safe(f.tipo));
+      appendInfo(summary,'Total',money(f.total));
+      appendInfo(summary,'Pendiente',money(f.balance));
+      appendInfo(summary,'Estado',Number(f.balance||0)===0?'Pagada':(Number(f.balance||0)<Number(f.total||0)?'Pago parcial':'Impaga'));
+      detailExtra.appendChild(summary);
+
+      const prodSec=document.createElement('section');prodSec.className='invoice-section';
+      const ph=document.createElement('h4');ph.textContent='Productos';prodSec.appendChild(ph);
+      const productos=Array.isArray(data.productos)?data.productos:[];
+      if(productos.length){
+        prodSec.appendChild(makeDetailTable(
+          ['Producto','Cantidad','Precio unitario','Neto','Impuestos','Total'],
+          productos.map(p=>[safe(p.producto),String(Number(p.cantidad||0)),money(p.precio_unitario),money(p.importe_neto),money(p.impuestos),money(p.total)])
+        ));
+      }else{
+        const empty=document.createElement('div');empty.className='detail-status';empty.textContent='Sin productos relacionados.';prodSec.appendChild(empty);
+      }
+      detailExtra.appendChild(prodSec);
+
+      const paySec=document.createElement('section');paySec.className='invoice-section';
+      const pgh=document.createElement('h4');pgh.textContent='Pagos';paySec.appendChild(pgh);
+      const pagos=Array.isArray(data.pagos)?data.pagos:[];
+      if(pagos.length){
+        paySec.appendChild(makeDetailTable(
+          ['Fecha','Pago','Importe aplicado','Total pago'],
+          pagos.map(p=>[safe(p.fecha_pago),safe(p.pago),money(p.importe_aplicado),money(p.total_pago)])
+        ));
+      }else{
+        const empty=document.createElement('div');empty.className='detail-status';empty.textContent='Todavía no hay pagos relacionados con esta factura.';paySec.appendChild(empty);
+      }
+      detailExtra.appendChild(paySec);
+    }catch(error){
+      modalStatus.textContent=error.message||'No pude cargar la factura.';
+    }
+  }
+
   async function openFinanceDetail(period,metricName,label){
     const date=dateInput.value||localISO();
     modal.hidden=false;document.body.style.overflow='hidden';
-    modalTitle.textContent=label;modalKicker.textContent=(period==='day'?'DÍA':'MES')+' · COMPRAS Y PAGOS';modalRows.innerHTML='';modalStatus.textContent='Cargando comprobantes…';
+    modalTitle.textContent=label;modalKicker.textContent=(period==='day'?'DÍA':'MES')+' · COMPRAS Y PAGOS';modalRows.innerHTML='';detailTable.hidden=false;detailExtra.hidden=true;detailExtra.innerHTML='';modalStatus.textContent='Cargando comprobantes…';
     try{
       const data=await window.RubenAuth.invoke('finance_detail',{date,period,metric:metricName});
       showDetail(label,(period==='day'?'DÍA':'MES')+' · '+safe(data.active_company?.name),Array.isArray(data.items)?data.items:[],true);
