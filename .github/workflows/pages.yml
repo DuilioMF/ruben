@@ -28,7 +28,7 @@ jobs:
         with:
           enablement: true
       - name: Validar versiones de todas las páginas
-        run: node --test tests/version-compuesta.test.js
+        run: node --test tests/*.test.js
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
