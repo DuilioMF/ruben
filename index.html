@@ -72,6 +72,27 @@ body{min-height:100vh;background:
 .invoice-summary small{display:block;color:var(--muted);font-size:8px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
 .invoice-summary b{font-size:12px}
 .invoice-section{padding:16px 18px}.invoice-section h4{margin:0 0 10px;color:var(--gold2);font:700 22px "Cormorant Garamond",serif}
+.invoice-upload-modal{position:fixed;inset:0;z-index:22000;display:grid;place-items:center;padding:22px;background:#02070dcc;backdrop-filter:blur(7px)}
+.invoice-upload-modal[hidden]{display:none}
+.invoice-upload-card{width:min(1180px,97vw);max-height:92vh;overflow:hidden;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000c}
+.invoice-upload-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.invoice-upload-head small{display:block;color:var(--gold2);font-size:8px;letter-spacing:.18em;margin-bottom:5px}.invoice-upload-head h3{margin:0;font:700 32px "Cormorant Garamond",serif}
+.invoice-upload-body{padding:18px;overflow:auto;max-height:calc(92vh - 82px)}
+.invoice-upload-grid{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.invoice-upload-grid input[type=file]{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:12px}
+.invoice-btn{border:1px solid var(--gold);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#102030;font-weight:900;padding:11px 14px;cursor:pointer}
+.invoice-btn.secondary{background:var(--panel);color:var(--ink);border-color:var(--line)}
+.invoice-btn:disabled{opacity:.5;cursor:not-allowed}
+.invoice-status{min-height:24px;margin:10px 0;color:var(--muted);font-size:11px}.invoice-status.ok{color:var(--good)}.invoice-status.bad{color:var(--bad)}
+.invoice-preview[hidden]{display:none}.invoice-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.invoice-field label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.12em;margin-bottom:5px;text-transform:uppercase}
+.invoice-field input,.invoice-correction textarea{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:10px;font:500 11px Inter}
+.invoice-items{width:100%;border-collapse:collapse;font-size:10px}.invoice-items th,.invoice-items td{border-bottom:1px solid var(--line);padding:7px}.invoice-items th{color:var(--gold2);text-align:left;background:var(--panel2)}.invoice-items input{width:100%;min-width:80px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px;font-size:10px}
+.invoice-correction{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.invoice-correction label{display:block;color:var(--gold2);font-size:9px;font-weight:800;margin-bottom:7px}
+.invoice-correction-actions,.invoice-save-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
+.invoice-order-btn{margin-top:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer}
+@media(max-width:900px){.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.invoice-upload-grid{grid-template-columns:1fr}.invoice-fields{grid-template-columns:1fr}}
 .state-strip{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .state-pill{border:1px solid color-mix(in srgb,var(--blue2) 55%,transparent);background:color-mix(in srgb,var(--blue) 12%,var(--panel));padding:8px 10px;color:var(--muted);font-size:10px}
 .flow{margin-top:24px;border:1px solid var(--line);padding:18px;background:color-mix(in srgb,var(--panel) 92%,transparent)}
@@ -83,9 +104,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}}
 </style>
-<link rel="stylesheet" href="theme.css?v=010&h=5">
-<script src="theme.js?v=010&h=5" defer></script>
-<script type="module" src="ruben-auth.js?v=010&h=5"></script>
+<link rel="stylesheet" href="theme.css?v=010&h=7">
+<script src="theme.js?v=010&h=7" defer></script>
+<script type="module" src="ruben-auth.js?v=010&h=7"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -169,6 +190,44 @@ body{min-height:100vh;background:
       </section>
     </div>
 
+    <div id="invoice-upload-modal" class="invoice-upload-modal" hidden>
+      <section class="invoice-upload-card" role="dialog" aria-modal="true" aria-labelledby="invoice-upload-title">
+        <div class="invoice-upload-head">
+          <div><small id="invoice-upload-kicker">PEDIDO</small><h3 id="invoice-upload-title">Cargar factura</h3></div>
+          <button id="invoice-upload-close" class="detail-close" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <div class="invoice-upload-body">
+          <div class="invoice-upload-grid">
+            <div class="filter">
+              <label for="invoice-file">PDF O FOTO DE LA FACTURA</label>
+              <input id="invoice-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp">
+            </div>
+            <button id="invoice-process" class="invoice-btn" type="button">Procesar factura</button>
+          </div>
+          <div id="invoice-upload-status" class="invoice-status">Elegí el archivo de la factura.</div>
+          <div id="invoice-preview" class="invoice-preview" hidden>
+            <div id="invoice-fields" class="invoice-fields"></div>
+            <div style="overflow:auto">
+              <table class="invoice-items">
+                <thead><tr><th>Producto</th><th>Cantidad</th><th>Unidad</th><th>Precio unitario</th><th>IVA</th><th>Importe</th></tr></thead>
+                <tbody id="invoice-items"></tbody>
+              </table>
+            </div>
+            <div class="invoice-correction">
+              <label for="invoice-correction">PEDIR UNA CORRECCIÓN</label>
+              <textarea id="invoice-correction" rows="3" placeholder="Ej.: revisá el número de factura y el segundo producto."></textarea>
+              <div class="invoice-correction-actions">
+                <button id="invoice-correct" class="invoice-btn secondary" type="button">Aplicar corrección</button>
+              </div>
+            </div>
+            <div class="invoice-save-actions">
+              <button id="invoice-save" class="invoice-btn" type="button">Guardar factura</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <details class="company-details">
       <summary>DATOS DE LA COMPAÑÍA ACTIVA</summary>
       <div id="company-card" class="company-data" hidden>
@@ -202,6 +261,19 @@ body{min-height:100vh;background:
   const detailTable=document.getElementById('detail-table');
   const detailExtra=document.getElementById('detail-extra');
   const modalClose=document.getElementById('detail-close');
+  const invoiceModal=document.getElementById('invoice-upload-modal');
+  const invoiceClose=document.getElementById('invoice-upload-close');
+  const invoiceKicker=document.getElementById('invoice-upload-kicker');
+  const invoiceFile=document.getElementById('invoice-file');
+  const invoiceProcess=document.getElementById('invoice-process');
+  const invoiceUploadStatus=document.getElementById('invoice-upload-status');
+  const invoicePreview=document.getElementById('invoice-preview');
+  const invoiceFields=document.getElementById('invoice-fields');
+  const invoiceItems=document.getElementById('invoice-items');
+  const invoiceCorrection=document.getElementById('invoice-correction');
+  const invoiceCorrect=document.getElementById('invoice-correct');
+  const invoiceSave=document.getElementById('invoice-save');
+  let invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',initialExtracted:null,current:null};
   let companies=[];
 
   const fields={
@@ -339,7 +411,21 @@ body{min-height:100vh;background:
         ? (Number(item.saldo||0)!==0?money(item.saldo):safe(item.tipo||'Pagado'))
         : safe(item.estado);
       const vals=[safe(item.fecha),safe(item.comprobante),party,money(item.total),last];
-      vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===3)td.className='amount';if(i===4)td.className='balance';tr.appendChild(td)});
+      vals.forEach((v,i)=>{
+        const td=document.createElement('td');td.textContent=v;
+        if(i===3)td.className='amount';
+        if(i===4){
+          td.className='balance';
+          if(!finance && norm(item.estado)==='pedido'){
+            const br=document.createElement('br');
+            const btn=document.createElement('button');
+            btn.type='button';btn.className='invoice-order-btn';btn.textContent='Cargar factura';
+            btn.addEventListener('click',e=>{e.stopPropagation();openInvoiceUpload(safe(item.comprobante))});
+            td.append(br,btn);
+          }
+        }
+        tr.appendChild(td);
+      });
       modalRows.appendChild(tr);
     }
     modal.hidden=false;
@@ -439,6 +525,193 @@ body{min-height:100vh;background:
       showDetail(label,(period==='day'?'DÍA':'MES')+' · '+safe(data.active_company?.name),Array.isArray(data.items)?data.items:[],true);
     }catch(error){modalStatus.textContent=error.message||'No pude cargar el detalle.'}
   }
+
+  const invoiceFieldDefs=[
+    ['proveedor','Proveedor'],['proveedor_cuit','CUIT proveedor'],['fecha','Fecha'],['tipo_comprobante','Tipo'],
+    ['punto_venta','Punto de venta'],['numero_comprobante','Número'],['subtotal','Subtotal'],['total_iva','IVA'],
+    ['percepciones','Percepciones'],['total','Total'],['cae','CAE'],['cae_vencimiento','Vencimiento CAE']
+  ];
+
+  function setInvoiceStatus(message,type=''){
+    invoiceUploadStatus.className='invoice-status'+(type?' '+type:'');
+    invoiceUploadStatus.textContent=message||'';
+  }
+  function closeInvoiceUpload(){
+    invoiceModal.hidden=true;
+    invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',initialExtracted:null,current:null};
+    invoiceFile.value='';invoicePreview.hidden=true;invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    if(modal.hidden)document.body.style.overflow='';
+  }
+  function openInvoiceUpload(pedidoRef){
+    invoiceUploadState={pedidoRef:String(pedidoRef||''),file:null,dataUrl:'',initialExtracted:null,current:null};
+    invoiceKicker.textContent='PEDIDO · '+safe(pedidoRef);
+    invoiceFile.value='';invoicePreview.hidden=true;invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    setInvoiceStatus('Elegí el PDF o la foto de la factura.');
+    invoiceModal.hidden=false;document.body.style.overflow='hidden';
+  }
+  invoiceClose.addEventListener('click',closeInvoiceUpload);
+  invoiceModal.addEventListener('click',e=>{if(e.target===invoiceModal)closeInvoiceUpload()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!invoiceModal.hidden)closeInvoiceUpload()});
+
+  function readFileDataUrl(file){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve(String(reader.result||''));
+      reader.onerror=()=>reject(reader.error||new Error('No pude leer el archivo.'));
+      reader.readAsDataURL(file);
+    });
+  }
+  async function sha256File(file){
+    const buf=await file.arrayBuffer();
+    const hash=await crypto.subtle.digest('SHA-256',buf);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  function renderInvoicePreview(data){
+    invoiceFields.innerHTML='';invoiceItems.innerHTML='';
+    for(const [key,label] of invoiceFieldDefs){
+      const box=document.createElement('div');box.className='invoice-field';
+      const lab=document.createElement('label');lab.textContent=label;
+      const input=document.createElement('input');input.dataset.invoiceField=key;input.value=String(data?.[key]??'');
+      box.append(lab,input);invoiceFields.appendChild(box);
+    }
+    const items=Array.isArray(data?.items)?data.items:[];
+    items.forEach((item,index)=>{
+      const tr=document.createElement('tr');tr.dataset.index=String(index);
+      for(const key of ['descripcion','cantidad','unidad','precio_unitario','iva_alicuota','importe']){
+        const td=document.createElement('td'),input=document.createElement('input');
+        input.dataset.itemField=key;input.value=String(item?.[key]??'');td.appendChild(input);tr.appendChild(td);
+      }
+      invoiceItems.appendChild(tr);
+    });
+    invoicePreview.hidden=false;
+  }
+  function collectInvoicePreview(){
+    const base=JSON.parse(JSON.stringify(invoiceUploadState.current||{}));
+    invoiceFields.querySelectorAll('[data-invoice-field]').forEach(input=>{base[input.dataset.invoiceField]=input.value});
+    const originalItems=Array.isArray(base.items)?base.items:[];
+    base.items=Array.from(invoiceItems.querySelectorAll('tr')).map((tr,index)=>{
+      const row={...(originalItems[index]||{})};
+      tr.querySelectorAll('[data-item-field]').forEach(input=>{row[input.dataset.itemField]=input.value});
+      return row;
+    });
+    return base;
+  }
+  async function extractInvoice(instruction=''){
+    const file=invoiceUploadState.file||invoiceFile.files?.[0];
+    if(!file){setInvoiceStatus('Elegí primero el PDF o la foto.','bad');return}
+    if(file.size>20*1024*1024){setInvoiceStatus('El archivo supera 20 MB.','bad');return}
+    invoiceUploadState.file=file;
+    invoiceProcess.disabled=true;invoiceCorrect.disabled=true;invoiceSave.disabled=true;
+    setInvoiceStatus(instruction?'Aplicando corrección sobre la factura…':'Leyendo la factura…');
+    try{
+      if(!invoiceUploadState.dataUrl)invoiceUploadState.dataUrl=await readFileDataUrl(file);
+      const body={file_name:file.name,mime_type:file.type||'application/pdf',base64:invoiceUploadState.dataUrl};
+      if(instruction){body.instruction=instruction;body.previous_data=collectInvoicePreview()}
+      const {data,error}=await window.RubenAuth.sb.functions.invoke('extract-invoice-json',{body});
+      if(error)throw error;
+      if(!data?.ok||!data?.data)throw new Error(data?.error||'No pude leer la factura.');
+      if(!invoiceUploadState.initialExtracted)invoiceUploadState.initialExtracted=JSON.parse(JSON.stringify(data.data));
+      invoiceUploadState.current=data.data;
+      renderInvoicePreview(data.data);
+      invoiceCorrection.value='';
+      setInvoiceStatus('Factura procesada. Revisá los datos antes de guardar.','ok');
+    }catch(error){
+      setInvoiceStatus('No pude procesar la factura: '+(error.message||error),'bad');
+    }finally{
+      invoiceProcess.disabled=false;invoiceCorrect.disabled=false;invoiceSave.disabled=false;
+    }
+  }
+  invoiceProcess.addEventListener('click',()=>extractInvoice(''));
+  invoiceCorrect.addEventListener('click',()=>{
+    const instruction=String(invoiceCorrection.value||'').trim();
+    if(!instruction){setInvoiceStatus('Escribí qué querés corregir.','bad');return}
+    extractInvoice(instruction);
+  });
+
+  async function ensurePedidoLink(sb,invoiceId,companyId,pedidoRef){
+    const existing=await sb.from('ruben_invoice_pedido_links').select('id')
+      .eq('invoice_upload_id',invoiceId).eq('company_id',companyId).eq('pedido_ref',pedidoRef).limit(1);
+    if(existing.error)throw existing.error;
+    if(existing.data?.length)return;
+    const ins=await sb.from('ruben_invoice_pedido_links').insert({
+      invoice_upload_id:invoiceId,company_id:companyId,pedido_ref:pedidoRef
+    });
+    if(ins.error)throw ins.error;
+  }
+
+  async function saveInvoiceUpload(){
+    const sb=window.RubenAuth?.sb;
+    const file=invoiceUploadState.file;
+    if(!sb||!file||!invoiceUploadState.current){setInvoiceStatus('Primero procesá la factura.','bad');return}
+    const confirmed=collectInvoicePreview();
+    const companyId=Number(select.value);
+    const company=companies.find(x=>Number(x.id)===companyId);
+    const pedidoRef=invoiceUploadState.pedidoRef;
+    const keyParts=[
+      String(confirmed.proveedor_cuit||'').replace(/\D/g,''),
+      String(confirmed.tipo_comprobante||'').trim().toUpperCase(),
+      String(confirmed.punto_venta||'').replace(/\D/g,''),
+      String(confirmed.numero_comprobante||'').replace(/\D/g,'')
+    ];
+    const documentKey=keyParts.every(Boolean)?keyParts.join('|'):'';
+    invoiceSave.disabled=true;invoiceProcess.disabled=true;invoiceCorrect.disabled=true;
+    setInvoiceStatus('Guardando factura y archivo original…');
+    let uploadedPath='',insertedId='';
+    try{
+      const {data:{user}}=await sb.auth.getUser();
+      if(!user)throw new Error('Sesión vencida.');
+      const fileHash=await sha256File(file);
+
+      let existing=null;
+      if(documentKey){
+        const q=await sb.from('ruben_invoice_uploads').select('id').eq('company_id',companyId).eq('document_key',documentKey).limit(1);
+        if(q.error)throw q.error;
+        existing=q.data?.[0]||null;
+      }
+      if(!existing){
+        const q=await sb.from('ruben_invoice_uploads').select('id').eq('company_id',companyId).eq('file_sha256',fileHash).limit(1);
+        if(q.error)throw q.error;
+        existing=q.data?.[0]||null;
+      }
+      if(existing){
+        await ensurePedidoLink(sb,existing.id,companyId,pedidoRef);
+        setInvoiceStatus('La factura ya estaba cargada. La asocié también al pedido '+pedidoRef+'.','ok');
+        return;
+      }
+
+      const safeName=file.name.replace(/[^a-zA-Z0-9._-]+/g,'_');
+      uploadedPath=user.id+'/'+crypto.randomUUID()+'-'+safeName;
+      const upload=await sb.storage.from('ruben-invoices').upload(uploadedPath,file,{contentType:file.type||'application/octet-stream',upsert:false});
+      if(upload.error)throw upload.error;
+
+      const ins=await sb.from('ruben_invoice_uploads').insert({
+        user_id:user.id,
+        company_id:companyId,
+        company_name:String(company?.name||''),
+        file_path:uploadedPath,
+        file_name:file.name,
+        mime_type:file.type||'application/octet-stream',
+        extracted_json:invoiceUploadState.initialExtracted||invoiceUploadState.current,
+        confirmed_json:confirmed,
+        status:'confirmed',
+        confirmed_at:new Date().toISOString(),
+        document_key:documentKey||null,
+        file_sha256:fileHash
+      }).select('id').single();
+      if(ins.error)throw ins.error;
+      insertedId=ins.data.id;
+
+      await ensurePedidoLink(sb,insertedId,companyId,pedidoRef);
+      setInvoiceStatus('Factura guardada y asociada al pedido '+pedidoRef+'.','ok');
+    }catch(error){
+      if(insertedId)await sb.from('ruben_invoice_uploads').delete().eq('id',insertedId);
+      if(uploadedPath)await sb.storage.from('ruben-invoices').remove([uploadedPath]);
+      setInvoiceStatus('No pude guardar la factura: '+(error.message||error),'bad');
+    }finally{
+      invoiceSave.disabled=false;invoiceProcess.disabled=false;invoiceCorrect.disabled=false;
+    }
+  }
+  invoiceSave.addEventListener('click',saveInvoiceUpload);
 
   async function loadDashboard(){
     if(!window.RubenAuth?.state?.authorized)return;
