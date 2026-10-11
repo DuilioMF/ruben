@@ -56,3 +56,12 @@ test('Busca el Product ID por coincidencia exacta con Products.Name',()=>{
   assert.match(html,/product_id/);
   assert.match(html,/Coincidencia exacta con Products\.Name/);
 });
+
+
+test('Reconoce transferencias como comprobante bancario',()=>{
+  assert.match(html,/Clase de comprobante/);
+  assert.match(html,/TRANSFERENCIA detectada/);
+  assert.match(html,/Referencia \/ ID operación/);
+  assert.match(html,/Banco origen/);
+  assert.match(html,/Banco destino/);
+});
