@@ -24,11 +24,19 @@ test('El layout se reacomoda antes de comprimir controles',()=>{
   assert.match(html,/\.filter-actions\{grid-column:1\/-1;justify-content:flex-end\}/);
 });
 
-test('Cargar factura sigue visible sin romper Compras',()=>{
-  assert.match(html,/>Cargar factura<\/button>/);
+test('Cargar comprobante sigue visible sin romper Compras',()=>{
+  assert.match(html,/>Cargar comprobante<\/button>/);
   assert.match(html,/COMPRAS Y GASTOS/);
   assert.match(html,/metric\('Insumos'/);
   assert.match(html,/metric\('Gastos'/);
   assert.match(html,/metric\('Pendiente de pago'/);
   assert.match(html,/metric\('Pagado'/);
+});
+
+
+test('La carga permite revisar el comprobante original antes de guardar',()=>{
+  assert.match(html,/id="invoice-document-preview"/);
+  assert.match(html,/COMPROBANTE ORIGINAL/);
+  assert.match(html,/>Guardar comprobante<\/button>/);
+  assert.match(html,/Puede ser factura, recibo, ticket u otro comprobante/);
 });
