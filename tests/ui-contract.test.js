@@ -40,3 +40,11 @@ test('La carga permite revisar el comprobante original antes de guardar',()=>{
   assert.match(html,/>Guardar comprobante<\/button>/);
   assert.match(html,/Puede ser factura, recibo, ticket u otro comprobante/);
 });
+
+
+test('El comprobante original ocupa el panel principal y muestra el archivo',()=>{
+  assert.match(html,/grid-template-columns:minmax\(520px,1\.35fr\) minmax\(380px,1fr\)/);
+  assert.match(html,/id="invoice-document-file"/);
+  assert.match(html,/id="invoice-document-open"/);
+  assert.match(html,/>Abrir original<\/button>/);
+});
