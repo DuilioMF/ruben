@@ -108,13 +108,21 @@ body{min-height:100vh;background:
 .invoice-btn.secondary{background:var(--panel);color:var(--ink);border-color:var(--line)}
 .invoice-btn:disabled{opacity:.5;cursor:not-allowed}
 .invoice-status{min-height:24px;margin:10px 0;color:var(--muted);font-size:11px}.invoice-status.ok{color:var(--good)}.invoice-status.bad{color:var(--bad)}
-.invoice-preview[hidden]{display:none}.invoice-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.invoice-preview[hidden]{display:none}
+.invoice-review-layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(420px,1.4fr);gap:16px;align-items:start}
+.invoice-document-preview{border:1px solid var(--line);background:var(--panel);min-height:460px;overflow:hidden}
+.invoice-document-preview[hidden]{display:none}
+.invoice-document-preview-head{padding:10px 12px;border-bottom:1px solid var(--line);color:var(--gold2);font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.invoice-document-preview iframe,.invoice-document-preview img{display:block;width:100%;height:560px;border:0;background:#fff;object-fit:contain}
+.invoice-review-data{min-width:0}
+.invoice-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
 .invoice-field label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.12em;margin-bottom:5px;text-transform:uppercase}
 .invoice-field input,.invoice-correction textarea{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:10px;font:500 11px Inter}
 .invoice-items{width:100%;border-collapse:collapse;font-size:10px}.invoice-items th,.invoice-items td{border-bottom:1px solid var(--line);padding:7px}.invoice-items th{color:var(--gold2);text-align:left;background:var(--panel2)}.invoice-items input{width:100%;min-width:80px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px;font-size:10px}
 .invoice-correction{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.invoice-correction label{display:block;color:var(--gold2);font-size:9px;font-weight:800;margin-bottom:7px}
 .invoice-correction-actions,.invoice-save-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
 .invoice-order-btn{margin-top:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer}
+@media(max-width:1000px){.invoice-review-layout{grid-template-columns:1fr}.invoice-document-preview iframe,.invoice-document-preview img{height:460px}}
 @media(max-width:900px){.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.invoice-upload-grid{grid-template-columns:1fr}.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.invoice-fields{grid-template-columns:1fr}}
@@ -130,9 +138,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=010&h=12">
-<script src="theme.js?v=010&h=12" defer></script>
-<script type="module" src="ruben-auth.js?v=010&h=12"></script>
+<link rel="stylesheet" href="theme.css?v=011&h=13">
+<script src="theme.js?v=011&h=13" defer></script>
+<script type="module" src="ruben-auth.js?v=011&h=13"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -166,7 +174,7 @@ body{min-height:100vh;background:
         </div>
         <div class="filter-actions">
           <button id="dashboard-refresh" class="refresh secondary" type="button">Actualizar</button>
-          <button id="invoice-upload-top" class="refresh primary" type="button">Cargar factura</button>
+          <button id="invoice-upload-top" class="refresh primary" type="button">Cargar comprobante</button>
         </div>
       </div>
     </section>
@@ -228,7 +236,7 @@ body{min-height:100vh;background:
     <div id="invoice-upload-modal" class="invoice-upload-modal" hidden>
       <section class="invoice-upload-card" role="dialog" aria-modal="true" aria-labelledby="invoice-upload-title">
         <div class="invoice-upload-head">
-          <div><small id="invoice-upload-kicker">PEDIDO</small><h3 id="invoice-upload-title">Cargar factura</h3></div>
+          <div><small id="invoice-upload-kicker">PEDIDO</small><h3 id="invoice-upload-title">Cargar comprobante</h3></div>
           <button id="invoice-upload-close" class="detail-close" type="button" aria-label="Cerrar">×</button>
         </div>
         <div class="invoice-upload-body">
@@ -238,29 +246,37 @@ body{min-height:100vh;background:
               <input id="invoice-pedido-ref" type="text" placeholder="Ej.: SO-1659">
             </div>
             <div class="filter">
-              <label for="invoice-file">PDF O FOTO DE LA FACTURA</label>
+              <label for="invoice-file">PDF O FOTO DEL COMPROBANTE</label>
               <input id="invoice-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp">
             </div>
-            <button id="invoice-process" class="invoice-btn" type="button">Procesar factura</button>
+            <button id="invoice-process" class="invoice-btn" type="button">Leer comprobante</button>
           </div>
-          <div id="invoice-upload-status" class="invoice-status">Elegí el archivo de la factura.</div>
+          <div id="invoice-upload-status" class="invoice-status">Elegí el PDF o la foto del comprobante.</div>
           <div id="invoice-preview" class="invoice-preview" hidden>
-            <div id="invoice-fields" class="invoice-fields"></div>
-            <div style="overflow:auto">
-              <table class="invoice-items">
-                <thead><tr><th>Producto</th><th>Cantidad</th><th>Unidad</th><th>Precio unitario</th><th>IVA</th><th>Importe</th></tr></thead>
-                <tbody id="invoice-items"></tbody>
-              </table>
-            </div>
-            <div class="invoice-correction">
-              <label for="invoice-correction">PEDIR UNA CORRECCIÓN</label>
-              <textarea id="invoice-correction" rows="3" placeholder="Ej.: revisá el número de factura y el segundo producto."></textarea>
-              <div class="invoice-correction-actions">
-                <button id="invoice-correct" class="invoice-btn secondary" type="button">Aplicar corrección</button>
+            <div class="invoice-review-layout">
+              <div id="invoice-document-preview" class="invoice-document-preview" hidden>
+                <div class="invoice-document-preview-head">COMPROBANTE ORIGINAL</div>
+                <div id="invoice-document-content"></div>
               </div>
-            </div>
-            <div class="invoice-save-actions">
-              <button id="invoice-save" class="invoice-btn" type="button">Guardar factura</button>
+              <div class="invoice-review-data">
+                <div id="invoice-fields" class="invoice-fields"></div>
+                <div style="overflow:auto">
+                  <table class="invoice-items">
+                    <thead><tr><th>Producto / concepto</th><th>Cantidad</th><th>Unidad</th><th>Precio unitario</th><th>IVA</th><th>Importe</th></tr></thead>
+                    <tbody id="invoice-items"></tbody>
+                  </table>
+                </div>
+                <div class="invoice-correction">
+                  <label for="invoice-correction">PEDIR UNA CORRECCIÓN</label>
+                  <textarea id="invoice-correction" rows="3" placeholder="Ej.: revisá el número del comprobante y el segundo concepto."></textarea>
+                  <div class="invoice-correction-actions">
+                    <button id="invoice-correct" class="invoice-btn secondary" type="button">Aplicar corrección</button>
+                  </div>
+                </div>
+                <div class="invoice-save-actions">
+                  <button id="invoice-save" class="invoice-btn" type="button">Guardar comprobante</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -311,10 +327,12 @@ body{min-height:100vh;background:
   const invoicePreview=document.getElementById('invoice-preview');
   const invoiceFields=document.getElementById('invoice-fields');
   const invoiceItems=document.getElementById('invoice-items');
+  const invoiceDocumentPreview=document.getElementById('invoice-document-preview');
+  const invoiceDocumentContent=document.getElementById('invoice-document-content');
   const invoiceCorrection=document.getElementById('invoice-correction');
   const invoiceCorrect=document.getElementById('invoice-correct');
   const invoiceSave=document.getElementById('invoice-save');
-  let invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',initialExtracted:null,current:null};
+  let invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
   let companies=[];
 
   const fields={
@@ -474,7 +492,7 @@ body{min-height:100vh;background:
           if(!finance && norm(item.estado)==='pedido'){
             const br=document.createElement('br');
             const btn=document.createElement('button');
-            btn.type='button';btn.className='invoice-order-btn';btn.textContent='Cargar factura';
+            btn.type='button';btn.className='invoice-order-btn';btn.textContent='Cargar comprobante';
             btn.addEventListener('click',e=>{e.stopPropagation();openInvoiceUpload(safe(item.comprobante))});
             td.append(br,btn);
           }
@@ -589,7 +607,7 @@ body{min-height:100vh;background:
     detailExtra.appendChild(summary);
 
     const actions=document.createElement('div');actions.className='invoice-section';
-    const load=document.createElement('button');load.type='button';load.className='btn primary';load.textContent='Cargar factura';
+    const load=document.createElement('button');load.type='button';load.className='btn primary';load.textContent='Cargar comprobante';
     load.addEventListener('click',()=>openInvoiceUpload(safe(item.comprobante)));
     actions.appendChild(load);
     detailExtra.appendChild(actions);
@@ -718,22 +736,60 @@ body{min-height:100vh;background:
   }
   function closeInvoiceUpload(){
     invoiceModal.hidden=true;
-    invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',initialExtracted:null,current:null};
-    invoiceFile.value='';invoicePedidoRef.value='';invoicePreview.hidden=true;invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
+    invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
+    invoiceFile.value='';invoicePedidoRef.value='';invoicePreview.hidden=true;invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
     if(modal.hidden)document.body.style.overflow='';
   }
   function openInvoiceUpload(pedidoRef){
-    invoiceUploadState={pedidoRef:String(pedidoRef||''),file:null,dataUrl:'',initialExtracted:null,current:null};
-    invoiceKicker.textContent=pedidoRef?'PEDIDO · '+safe(pedidoRef):'NUEVA FACTURA';
+    if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
+    invoiceUploadState={pedidoRef:String(pedidoRef||''),file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
+    invoiceKicker.textContent=pedidoRef?'PEDIDO · '+safe(pedidoRef):'NUEVO COMPROBANTE';
     invoicePedidoRef.value=String(pedidoRef||'');
-    invoiceFile.value='';invoicePreview.hidden=true;invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
-    setInvoiceStatus('Elegí el PDF o la foto de la factura. El pedido es opcional.');
+    invoiceFile.value='';invoicePreview.hidden=true;invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    setInvoiceStatus('Elegí el PDF o la foto del comprobante. Puede ser factura, recibo, ticket u otro comprobante. El pedido es opcional.');
     invoiceModal.hidden=false;document.body.style.overflow='hidden';
   }
   invoiceTop.addEventListener('click',()=>openInvoiceUpload(''));
   invoiceClose.addEventListener('click',closeInvoiceUpload);
   invoiceModal.addEventListener('click',e=>{if(e.target===invoiceModal)closeInvoiceUpload()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!invoiceModal.hidden)closeInvoiceUpload()});
+
+  function showInvoiceDocument(file){
+    if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
+    invoiceUploadState.previewUrl=URL.createObjectURL(file);
+    invoiceDocumentContent.innerHTML='';
+    let el;
+    if((file.type||'').startsWith('image/')){
+      el=document.createElement('img');
+      el.alt='Vista previa del comprobante';
+      el.src=invoiceUploadState.previewUrl;
+    }else{
+      el=document.createElement('iframe');
+      el.title='Vista previa del comprobante';
+      el.src=invoiceUploadState.previewUrl;
+    }
+    invoiceDocumentContent.appendChild(el);
+    invoiceDocumentPreview.hidden=false;
+    invoicePreview.hidden=false;
+  }
+  invoiceFile.addEventListener('change',()=>{
+    const file=invoiceFile.files?.[0];
+    invoiceUploadState.file=file||null;
+    invoiceUploadState.dataUrl='';
+    invoiceUploadState.initialExtracted=null;
+    invoiceUploadState.current=null;
+    invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    if(file){
+      showInvoiceDocument(file);
+      setInvoiceStatus('Comprobante listo para leer. Revisá el original y tocá “Leer comprobante”.');
+    }else{
+      if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
+      invoiceUploadState.previewUrl='';
+      invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoicePreview.hidden=true;
+      setInvoiceStatus('Elegí el PDF o la foto del comprobante.');
+    }
+  });
 
   function readFileDataUrl(file){
     return new Promise((resolve,reject)=>{
@@ -766,6 +822,7 @@ body{min-height:100vh;background:
       invoiceItems.appendChild(tr);
     });
     invoicePreview.hidden=false;
+    invoiceDocumentPreview.hidden=!invoiceUploadState.file;
   }
   function collectInvoicePreview(){
     const base=JSON.parse(JSON.stringify(invoiceUploadState.current||{}));
@@ -784,21 +841,21 @@ body{min-height:100vh;background:
     if(file.size>20*1024*1024){setInvoiceStatus('El archivo supera 20 MB.','bad');return}
     invoiceUploadState.file=file;
     invoiceProcess.disabled=true;invoiceCorrect.disabled=true;invoiceSave.disabled=true;
-    setInvoiceStatus(instruction?'Aplicando corrección sobre la factura…':'Leyendo la factura…');
+    setInvoiceStatus(instruction?'Aplicando corrección sobre el comprobante…':'Leyendo el comprobante…');
     try{
       if(!invoiceUploadState.dataUrl)invoiceUploadState.dataUrl=await readFileDataUrl(file);
       const body={file_name:file.name,mime_type:file.type||'application/pdf',base64:invoiceUploadState.dataUrl};
       if(instruction){body.instruction=instruction;body.previous_data=collectInvoicePreview()}
       const {data,error}=await window.RubenAuth.sb.functions.invoke('extract-invoice-json',{body});
       if(error)throw error;
-      if(!data?.ok||!data?.data)throw new Error(data?.error||'No pude leer la factura.');
+      if(!data?.ok||!data?.data)throw new Error(data?.error||'No pude leer el comprobante.');
       if(!invoiceUploadState.initialExtracted)invoiceUploadState.initialExtracted=JSON.parse(JSON.stringify(data.data));
       invoiceUploadState.current=data.data;
       renderInvoicePreview(data.data);
       invoiceCorrection.value='';
-      setInvoiceStatus('Factura procesada. Revisá los datos antes de guardar.','ok');
+      setInvoiceStatus('Comprobante procesado. Revisá el original y los datos antes de guardar.','ok');
     }catch(error){
-      setInvoiceStatus('No pude procesar la factura: '+(error.message||error),'bad');
+      setInvoiceStatus('No pude procesar el comprobante: '+(error.message||error),'bad');
     }finally{
       invoiceProcess.disabled=false;invoiceCorrect.disabled=false;invoiceSave.disabled=false;
     }
@@ -824,7 +881,7 @@ body{min-height:100vh;background:
   async function saveInvoiceUpload(){
     const sb=window.RubenAuth?.sb;
     const file=invoiceUploadState.file;
-    if(!sb||!file||!invoiceUploadState.current){setInvoiceStatus('Primero procesá la factura.','bad');return}
+    if(!sb||!file||!invoiceUploadState.current){setInvoiceStatus('Primero leé el comprobante.','bad');return}
     const confirmed=collectInvoicePreview();
     const companyId=Number(select.value);
     const company=companies.find(x=>Number(x.id)===companyId);
@@ -837,7 +894,7 @@ body{min-height:100vh;background:
     ];
     const documentKey=keyParts.every(Boolean)?keyParts.join('|'):'';
     invoiceSave.disabled=true;invoiceProcess.disabled=true;invoiceCorrect.disabled=true;
-    setInvoiceStatus('Guardando factura y archivo original…');
+    setInvoiceStatus('Guardando comprobante y archivo original…');
     let uploadedPath='',insertedId='';
     try{
       const {data:{user}}=await sb.auth.getUser();
@@ -858,8 +915,8 @@ body{min-height:100vh;background:
       if(existing){
         if(pedidoRef) await ensurePedidoLink(sb,existing.id,companyId,pedidoRef);
         setInvoiceStatus(pedidoRef
-          ? 'La factura ya estaba cargada. La asocié también al pedido '+pedidoRef+'.'
-          : 'La factura ya estaba cargada. No se duplicó.','ok');
+          ? 'El comprobante ya estaba cargado. Lo asocié también al pedido '+pedidoRef+'.'
+          : 'El comprobante ya estaba cargado. No se duplicó.','ok');
         return;
       }
 
@@ -887,12 +944,12 @@ body{min-height:100vh;background:
 
       if(pedidoRef) await ensurePedidoLink(sb,insertedId,companyId,pedidoRef);
       setInvoiceStatus(pedidoRef
-        ? 'Factura guardada y asociada al pedido '+pedidoRef+'.'
-        : 'Factura guardada. Podés asociarla a un pedido después.','ok');
+        ? 'Comprobante guardado y asociado al pedido '+pedidoRef+'.'
+        : 'Comprobante guardado. Podés asociarlo a un pedido después.','ok');
     }catch(error){
       if(insertedId)await sb.from('ruben_invoice_uploads').delete().eq('id',insertedId);
       if(uploadedPath)await sb.storage.from('ruben-invoices').remove([uploadedPath]);
-      setInvoiceStatus('No pude guardar la factura: '+(error.message||error),'bad');
+      setInvoiceStatus('No pude guardar el comprobante: '+(error.message||error),'bad');
     }finally{
       invoiceSave.disabled=false;invoiceProcess.disabled=false;invoiceCorrect.disabled=false;
     }
