@@ -98,10 +98,10 @@ body{min-height:100vh;background:
 .product-sheet .invoice-summary{padding:0;border-bottom:0;margin-bottom:14px}
 .invoice-upload-modal{position:fixed;inset:0;z-index:22000;display:grid;place-items:center;padding:22px;background:#02070dcc;backdrop-filter:blur(7px)}
 .invoice-upload-modal[hidden]{display:none}
-.invoice-upload-card{width:min(1180px,97vw);max-height:92vh;overflow:hidden;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000c}
+.invoice-upload-card{width:min(1480px,98vw);max-height:94vh;overflow:hidden;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000c}
 .invoice-upload-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
 .invoice-upload-head small{display:block;color:var(--gold2);font-size:8px;letter-spacing:.18em;margin-bottom:5px}.invoice-upload-head h3{margin:0;font:700 32px "Cormorant Garamond",serif}
-.invoice-upload-body{padding:18px;overflow:auto;max-height:calc(92vh - 82px)}
+.invoice-upload-body{padding:18px;overflow:auto;max-height:calc(94vh - 82px)}
 .invoice-upload-grid{display:grid;grid-template-columns:minmax(190px,.7fr) minmax(320px,1.3fr) auto;gap:10px;align-items:end}
 .invoice-upload-grid input[type=file]{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:12px}
 .invoice-btn{border:1px solid var(--gold);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#102030;font-weight:900;padding:11px 14px;cursor:pointer}
@@ -109,11 +109,13 @@ body{min-height:100vh;background:
 .invoice-btn:disabled{opacity:.5;cursor:not-allowed}
 .invoice-status{min-height:24px;margin:10px 0;color:var(--muted);font-size:11px}.invoice-status.ok{color:var(--good)}.invoice-status.bad{color:var(--bad)}
 .invoice-preview[hidden]{display:none}
-.invoice-review-layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(420px,1.4fr);gap:16px;align-items:start}
-.invoice-document-preview{border:1px solid var(--line);background:var(--panel);min-height:460px;overflow:hidden}
+.invoice-review-layout{display:grid;grid-template-columns:minmax(520px,1.35fr) minmax(380px,1fr);gap:18px;align-items:start}
+.invoice-document-preview{border:1px solid var(--line);background:var(--panel);min-height:640px;overflow:hidden}
 .invoice-document-preview[hidden]{display:none}
-.invoice-document-preview-head{padding:10px 12px;border-bottom:1px solid var(--line);color:var(--gold2);font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
-.invoice-document-preview iframe,.invoice-document-preview img{display:block;width:100%;height:560px;border:0;background:#fff;object-fit:contain}
+.invoice-document-preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--gold2);font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.invoice-document-file{display:block;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);letter-spacing:0;text-transform:none;font-size:10px}
+.invoice-document-open{border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:7px 9px;font-size:9px;font-weight:800;cursor:pointer}
+.invoice-document-preview iframe,.invoice-document-preview img{display:block;width:100%;height:690px;border:0;background:#fff;object-fit:contain}
 .invoice-review-data{min-width:0}
 .invoice-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
 .invoice-field label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.12em;margin-bottom:5px;text-transform:uppercase}
@@ -122,7 +124,7 @@ body{min-height:100vh;background:
 .invoice-correction{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.invoice-correction label{display:block;color:var(--gold2);font-size:9px;font-weight:800;margin-bottom:7px}
 .invoice-correction-actions,.invoice-save-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
 .invoice-order-btn{margin-top:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer}
-@media(max-width:1000px){.invoice-review-layout{grid-template-columns:1fr}.invoice-document-preview iframe,.invoice-document-preview img{height:460px}}
+@media(max-width:1100px){.invoice-review-layout{grid-template-columns:1fr}.invoice-document-preview{min-height:520px}.invoice-document-preview iframe,.invoice-document-preview img{height:560px}}
 @media(max-width:900px){.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.invoice-upload-grid{grid-template-columns:1fr}.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.invoice-fields{grid-template-columns:1fr}}
@@ -138,9 +140,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=011&h=13">
-<script src="theme.js?v=011&h=13" defer></script>
-<script type="module" src="ruben-auth.js?v=011&h=13"></script>
+<link rel="stylesheet" href="theme.css?v=012&h=14">
+<script src="theme.js?v=012&h=14" defer></script>
+<script type="module" src="ruben-auth.js?v=012&h=14"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -255,7 +257,11 @@ body{min-height:100vh;background:
           <div id="invoice-preview" class="invoice-preview" hidden>
             <div class="invoice-review-layout">
               <div id="invoice-document-preview" class="invoice-document-preview" hidden>
-                <div class="invoice-document-preview-head">COMPROBANTE ORIGINAL</div>
+                <div class="invoice-document-preview-head">
+                  <span>COMPROBANTE ORIGINAL</span>
+                  <span id="invoice-document-file" class="invoice-document-file"></span>
+                  <button id="invoice-document-open" class="invoice-document-open" type="button">Abrir original</button>
+                </div>
                 <div id="invoice-document-content"></div>
               </div>
               <div class="invoice-review-data">
@@ -329,6 +335,8 @@ body{min-height:100vh;background:
   const invoiceItems=document.getElementById('invoice-items');
   const invoiceDocumentPreview=document.getElementById('invoice-document-preview');
   const invoiceDocumentContent=document.getElementById('invoice-document-content');
+  const invoiceDocumentFile=document.getElementById('invoice-document-file');
+  const invoiceDocumentOpen=document.getElementById('invoice-document-open');
   const invoiceCorrection=document.getElementById('invoice-correction');
   const invoiceCorrect=document.getElementById('invoice-correct');
   const invoiceSave=document.getElementById('invoice-save');
@@ -738,7 +746,7 @@ body{min-height:100vh;background:
     invoiceModal.hidden=true;
     if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
     invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
-    invoiceFile.value='';invoicePedidoRef.value='';invoicePreview.hidden=true;invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    invoiceFile.value='';invoicePedidoRef.value='';invoicePreview.hidden=true;invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceDocumentFile.textContent='';invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
     if(modal.hidden)document.body.style.overflow='';
   }
   function openInvoiceUpload(pedidoRef){
@@ -746,7 +754,7 @@ body{min-height:100vh;background:
     invoiceUploadState={pedidoRef:String(pedidoRef||''),file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
     invoiceKicker.textContent=pedidoRef?'PEDIDO · '+safe(pedidoRef):'NUEVO COMPROBANTE';
     invoicePedidoRef.value=String(pedidoRef||'');
-    invoiceFile.value='';invoicePreview.hidden=true;invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
+    invoiceFile.value='';invoicePreview.hidden=true;invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceDocumentFile.textContent='';invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
     setInvoiceStatus('Elegí el PDF o la foto del comprobante. Puede ser factura, recibo, ticket u otro comprobante. El pedido es opcional.');
     invoiceModal.hidden=false;document.body.style.overflow='hidden';
   }
@@ -770,9 +778,15 @@ body{min-height:100vh;background:
       el.src=invoiceUploadState.previewUrl;
     }
     invoiceDocumentContent.appendChild(el);
+    invoiceDocumentFile.textContent=file.name;
+    invoiceDocumentOpen.disabled=false;
     invoiceDocumentPreview.hidden=false;
     invoicePreview.hidden=false;
   }
+  invoiceDocumentOpen.addEventListener('click',()=>{
+    if(!invoiceUploadState.previewUrl)return;
+    window.open(invoiceUploadState.previewUrl,'_blank','noopener,noreferrer');
+  });
   invoiceFile.addEventListener('change',()=>{
     const file=invoiceFile.files?.[0];
     invoiceUploadState.file=file||null;
@@ -782,11 +796,11 @@ body{min-height:100vh;background:
     invoiceFields.innerHTML='';invoiceItems.innerHTML='';invoiceCorrection.value='';
     if(file){
       showInvoiceDocument(file);
-      setInvoiceStatus('Comprobante listo para leer. Revisá el original y tocá “Leer comprobante”.');
+      setInvoiceStatus('Archivo cargado y visible a la izquierda. Revisá el comprobante original y después tocá “Leer comprobante”.');
     }else{
       if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
       invoiceUploadState.previewUrl='';
-      invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoicePreview.hidden=true;
+      invoiceDocumentPreview.hidden=true;invoiceDocumentContent.innerHTML='';invoiceDocumentFile.textContent='';invoiceDocumentOpen.disabled=true;invoicePreview.hidden=true;
       setInvoiceStatus('Elegí el PDF o la foto del comprobante.');
     }
   });
