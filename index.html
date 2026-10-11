@@ -140,9 +140,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=012&h=14">
-<script src="theme.js?v=012&h=14" defer></script>
-<script type="module" src="ruben-auth.js?v=012&h=14"></script>
+<link rel="stylesheet" href="theme.css?v=013&h=15">
+<script src="theme.js?v=013&h=15" defer></script>
+<script type="module" src="ruben-auth.js?v=013&h=15"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -268,7 +268,7 @@ body{min-height:100vh;background:
                 <div id="invoice-fields" class="invoice-fields"></div>
                 <div style="overflow:auto">
                   <table class="invoice-items">
-                    <thead><tr><th>Producto / concepto</th><th>Cantidad</th><th>Unidad</th><th>Precio unitario</th><th>IVA</th><th>Importe</th></tr></thead>
+                    <thead><tr><th>Producto / concepto</th><th>ID producto</th><th>Cantidad</th><th>Unidad</th><th>Precio unitario</th><th>IVA</th><th>Importe</th></tr></thead>
                     <tbody id="invoice-items"></tbody>
                   </table>
                 </div>
@@ -829,9 +829,21 @@ body{min-height:100vh;background:
     const items=Array.isArray(data?.items)?data.items:[];
     items.forEach((item,index)=>{
       const tr=document.createElement('tr');tr.dataset.index=String(index);
-      for(const key of ['descripcion','cantidad','unidad','precio_unitario','iva_alicuota','importe']){
+      for(const key of ['descripcion','product_id','cantidad','unidad','precio_unitario','iva_alicuota','importe']){
         const td=document.createElement('td'),input=document.createElement('input');
-        input.dataset.itemField=key;input.value=String(item?.[key]??'');td.appendChild(input);tr.appendChild(td);
+        input.dataset.itemField=key;
+        input.value=String(item?.[key]??'');
+        if(key==='product_id'){
+          input.readOnly=true;
+          const matches=Number(item?.product_match_count||0);
+          input.placeholder=matches>1?'Nombre duplicado':'Sin coincidencia';
+          input.title=matches===1
+            ? 'Coincidencia exacta con Products.Name'
+            : matches>1
+              ? 'Hay más de un Products.Name igual; no se asigna un ID automáticamente.'
+              : 'No hubo coincidencia exacta con Products.Name.';
+        }
+        td.appendChild(input);tr.appendChild(td);
       }
       invoiceItems.appendChild(tr);
     });
@@ -849,6 +861,33 @@ body{min-height:100vh;background:
     });
     return base;
   }
+  async function enrichInvoiceProducts(source,failOnError=false){
+    const data=JSON.parse(JSON.stringify(source||{}));
+    const items=Array.isArray(data.items)?data.items:[];
+    const names=[...new Set(items.map(item=>String(item?.descripcion||'').trim()).filter(Boolean))];
+    if(!names.length)return {data,lookupError:''};
+    try{
+      const lookup=await window.RubenAuth.invoke('product_lookup',{names});
+      const matches=Array.isArray(lookup?.matches)?lookup.matches:[];
+      const byName=new Map(matches.map(match=>[String(match?.requested_name||'').trim(),match]));
+      data.items=items.map(item=>{
+        const requested=String(item?.descripcion||'').trim();
+        const match=byName.get(requested);
+        const count=Number(match?.match_count||0);
+        return {
+          ...item,
+          product_id:count===1&&Number(match?.product_id||0)>0?Number(match.product_id):null,
+          product_name:count===1?String(match?.product_name||''):'',
+          product_match_count:count
+        };
+      });
+      return {data,lookupError:''};
+    }catch(error){
+      if(failOnError)throw new Error('No pude verificar los productos contra Products: '+(error.message||error));
+      data.items=items.map(item=>({...item,product_id:null,product_name:'',product_match_count:0}));
+      return {data,lookupError:error.message||String(error)};
+    }
+  }
   async function extractInvoice(instruction=''){
     const file=invoiceUploadState.file||invoiceFile.files?.[0];
     if(!file){setInvoiceStatus('Elegí primero el PDF o la foto.','bad');return}
@@ -863,11 +902,17 @@ body{min-height:100vh;background:
       const {data,error}=await window.RubenAuth.sb.functions.invoke('extract-invoice-json',{body});
       if(error)throw error;
       if(!data?.ok||!data?.data)throw new Error(data?.error||'No pude leer el comprobante.');
-      if(!invoiceUploadState.initialExtracted)invoiceUploadState.initialExtracted=JSON.parse(JSON.stringify(data.data));
-      invoiceUploadState.current=data.data;
-      renderInvoicePreview(data.data);
+      const enriched=await enrichInvoiceProducts(data.data,false);
+      if(!invoiceUploadState.initialExtracted)invoiceUploadState.initialExtracted=JSON.parse(JSON.stringify(enriched.data));
+      invoiceUploadState.current=enriched.data;
+      renderInvoicePreview(enriched.data);
       invoiceCorrection.value='';
-      setInvoiceStatus('Comprobante procesado. Revisá el original y los datos antes de guardar.','ok');
+      setInvoiceStatus(
+        enriched.lookupError
+          ? 'Comprobante procesado, pero no pude buscar los ID de Products. Podés reintentar antes de guardar.'
+          : 'Comprobante procesado. Los productos con coincidencia exacta en Products.Name ya muestran su ID. Revisá todo antes de guardar.',
+        enriched.lookupError?'bad':'ok'
+      );
     }catch(error){
       setInvoiceStatus('No pude procesar el comprobante: '+(error.message||error),'bad');
     }finally{
@@ -896,7 +941,11 @@ body{min-height:100vh;background:
     const sb=window.RubenAuth?.sb;
     const file=invoiceUploadState.file;
     if(!sb||!file||!invoiceUploadState.current){setInvoiceStatus('Primero leé el comprobante.','bad');return}
-    const confirmed=collectInvoicePreview();
+    let confirmed=collectInvoicePreview();
+    const verified=await enrichInvoiceProducts(confirmed,true);
+    confirmed=verified.data;
+    invoiceUploadState.current=confirmed;
+    renderInvoicePreview(confirmed);
     const companyId=Number(select.value);
     const company=companies.find(x=>Number(x.id)===companyId);
     const pedidoRef=String(invoicePedidoRef.value||invoiceUploadState.pedidoRef||'').trim();
