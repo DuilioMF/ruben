@@ -43,18 +43,29 @@ test('La carga permite revisar el comprobante original antes de guardar',()=>{
 
 
 test('El comprobante original ocupa el panel principal y muestra el archivo',()=>{
-  assert.match(html,/grid-template-columns:minmax\(520px,1\.35fr\) minmax\(380px,1fr\)/);
+  assert.match(html,/grid-template-columns:minmax\(360px,\.72fr\) minmax\(720px,1\.55fr\)/);
   assert.match(html,/id="invoice-document-file"/);
   assert.match(html,/id="invoice-document-open"/);
   assert.match(html,/>Abrir original<\/button>/);
 });
 
 
-test('Busca el Product ID por coincidencia exacta con Products.Name',()=>{
+test('Busca Products por nombre y código y permite alta desde Sin coincidencia',()=>{
   assert.match(html,/ID producto/);
   assert.match(html,/product_lookup/);
-  assert.match(html,/product_id/);
-  assert.match(html,/Coincidencia exacta con Products\.Name/);
+  assert.match(html,/codigo:String\(item\?\.codigo/);
+  assert.match(html,/Agregar producto/);
+  assert.match(html,/product_catalog/);
+  assert.match(html,/create_product/);
+  assert.match(html,/Guardar producto/);
+});
+
+test('Prorratea el descuento global sobre el precio unitario',()=>{
+  assert.match(html,/function prorateInvoiceDiscount/);
+  assert.match(html,/descuento_prorrateado_pct/);
+  assert.match(html,/P\.Unit original/);
+  assert.match(html,/P\.Unit final/);
+  assert.match(html,/Subtotal gravado/);
 });
 
 
