@@ -48,3 +48,11 @@ test('El comprobante original ocupa el panel principal y muestra el archivo',()=
   assert.match(html,/id="invoice-document-open"/);
   assert.match(html,/>Abrir original<\/button>/);
 });
+
+
+test('Busca el Product ID por coincidencia exacta con Products.Name',()=>{
+  assert.match(html,/ID producto/);
+  assert.match(html,/product_lookup/);
+  assert.match(html,/product_id/);
+  assert.match(html,/Coincidencia exacta con Products\.Name/);
+});
