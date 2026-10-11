@@ -98,10 +98,10 @@ body{min-height:100vh;background:
 .product-sheet .invoice-summary{padding:0;border-bottom:0;margin-bottom:14px}
 .invoice-upload-modal{position:fixed;inset:0;z-index:22000;display:grid;place-items:center;padding:22px;background:#02070dcc;backdrop-filter:blur(7px)}
 .invoice-upload-modal[hidden]{display:none}
-.invoice-upload-card{width:min(1480px,98vw);max-height:94vh;overflow:hidden;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000c}
+.invoice-upload-card{width:min(1580px,99vw);max-height:96vh;overflow:hidden;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000c}
 .invoice-upload-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
 .invoice-upload-head small{display:block;color:var(--gold2);font-size:8px;letter-spacing:.18em;margin-bottom:5px}.invoice-upload-head h3{margin:0;font:700 32px "Cormorant Garamond",serif}
-.invoice-upload-body{padding:18px;overflow:auto;max-height:calc(94vh - 82px)}
+.invoice-upload-body{padding:12px 14px;overflow:auto;max-height:calc(96vh - 78px)}
 .invoice-upload-grid{display:grid;grid-template-columns:minmax(190px,.7fr) minmax(320px,1.3fr) auto;gap:10px;align-items:end}
 .invoice-upload-grid input[type=file]{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:12px}
 .invoice-btn{border:1px solid var(--gold);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#102030;font-weight:900;padding:11px 14px;cursor:pointer}
@@ -109,13 +109,13 @@ body{min-height:100vh;background:
 .invoice-btn:disabled{opacity:.5;cursor:not-allowed}
 .invoice-status{min-height:24px;margin:10px 0;color:var(--muted);font-size:11px}.invoice-status.ok{color:var(--good)}.invoice-status.bad{color:var(--bad)}
 .invoice-preview[hidden]{display:none}
-.invoice-review-layout{display:grid;grid-template-columns:minmax(520px,1.35fr) minmax(380px,1fr);gap:18px;align-items:start}
-.invoice-document-preview{border:1px solid var(--line);background:var(--panel);min-height:640px;overflow:hidden}
+.invoice-review-layout{display:grid;grid-template-columns:minmax(360px,.72fr) minmax(720px,1.55fr);gap:12px;align-items:start}
+.invoice-document-preview{border:1px solid var(--line);background:var(--panel);min-height:500px;overflow:hidden}
 .invoice-document-preview[hidden]{display:none}
 .invoice-document-preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--gold2);font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 .invoice-document-file{display:block;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);letter-spacing:0;text-transform:none;font-size:10px}
 .invoice-document-open{border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:7px 9px;font-size:9px;font-weight:800;cursor:pointer}
-.invoice-document-preview iframe,.invoice-document-preview img{display:block;width:100%;height:690px;border:0;background:#fff;object-fit:contain}
+.invoice-document-preview iframe,.invoice-document-preview img{display:block;width:100%;height:590px;border:0;background:#fff;object-fit:contain;object-position:center top}
 .invoice-review-data{min-width:0}
 .invoice-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
 .invoice-field label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.12em;margin-bottom:5px;text-transform:uppercase}
@@ -124,6 +124,24 @@ body{min-height:100vh;background:
 .invoice-correction{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.invoice-correction label{display:block;color:var(--gold2);font-size:9px;font-weight:800;margin-bottom:7px}
 .invoice-correction-actions,.invoice-save-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
 .invoice-order-btn{margin-top:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer}
+.product-match-btn{width:100%;min-width:104px;border:1px solid var(--gold);background:color-mix(in srgb,var(--gold) 13%,var(--panel));color:var(--gold2);padding:7px 8px;font-size:9px;font-weight:900;cursor:pointer}
+.product-match-btn:hover{background:color-mix(in srgb,var(--gold) 22%,var(--panel))}
+.invoice-items .price-original{color:var(--muted)}
+.invoice-items .price-final{border-color:color-mix(in srgb,var(--good) 50%,var(--line));font-weight:800}
+.invoice-items .discount-cell{min-width:78px;color:var(--gold2);font-weight:800;text-align:right}
+.product-create-modal{z-index:23000}
+.product-create-card{width:min(760px,96vw);max-height:92vh;overflow:auto;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000d}
+.product-create-body{padding:18px}
+.product-create-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.product-create-grid .wide{grid-column:1/-1}
+.product-create-field label{display:block;color:var(--gold2);font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.product-create-field input,.product-create-field select{width:100%;height:42px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:0 10px;font:600 11px Inter}
+.product-create-checks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.product-create-checks label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);padding:10px;background:var(--panel);font-size:10px}
+.product-create-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.product-create-status{min-height:20px;margin-top:10px;color:var(--muted);font-size:10px}
+.product-create-status.bad{color:var(--bad)}.product-create-status.ok{color:var(--good)}
+@media(max-width:720px){.product-create-grid{grid-template-columns:1fr}.product-create-grid .wide{grid-column:auto}.product-create-checks{grid-template-columns:1fr 1fr}}
 @media(max-width:1100px){.invoice-review-layout{grid-template-columns:1fr}.invoice-document-preview{min-height:520px}.invoice-document-preview iframe,.invoice-document-preview img{height:560px}}
 @media(max-width:900px){.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.invoice-upload-grid{grid-template-columns:1fr}.invoice-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -140,9 +158,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=014&h=16">
-<script src="theme.js?v=014&h=16" defer></script>
-<script type="module" src="ruben-auth.js?v=014&h=16"></script>
+<link rel="stylesheet" href="theme.css?v=015&h=17">
+<script src="theme.js?v=015&h=17" defer></script>
+<script type="module" src="ruben-auth.js?v=015&h=17"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -268,7 +286,7 @@ body{min-height:100vh;background:
                 <div id="invoice-fields" class="invoice-fields"></div>
                 <div style="overflow:auto">
                   <table class="invoice-items">
-                    <thead><tr><th>Producto / concepto</th><th>ID producto</th><th>Cantidad</th><th>Unidad</th><th>Precio unitario</th><th>IVA</th><th>Importe</th></tr></thead>
+                    <thead><tr><th>Código</th><th>Producto / concepto</th><th>ID producto</th><th>Cantidad</th><th>Unidad</th><th>P.Unit original</th><th>Desc.</th><th>P.Unit final</th><th>IVA</th><th>Importe</th></tr></thead>
                     <tbody id="invoice-items"></tbody>
                   </table>
                 </div>
@@ -307,6 +325,66 @@ body{min-height:100vh;background:
   </main>
 </div>
 
+    <div id="product-create-modal" class="invoice-upload-modal product-create-modal" hidden>
+      <section class="product-create-card" role="dialog" aria-modal="true" aria-labelledby="product-create-title">
+        <div class="invoice-upload-head">
+          <div><small>PRODUCTS · ALTA</small><h3 id="product-create-title">Agregar producto</h3></div>
+          <button id="product-create-close" class="detail-close" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <div class="product-create-body">
+          <div class="product-create-grid">
+            <div class="product-create-field">
+              <label for="product-create-code">Código de la factura</label>
+              <input id="product-create-code" type="text" readonly>
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-type">Tipo</label>
+              <input id="product-create-type" type="number" value="3">
+            </div>
+            <div class="product-create-field wide">
+              <label for="product-create-name">Nombre en Products</label>
+              <input id="product-create-name" type="text">
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-category">Categoría</label>
+              <select id="product-create-category"></select>
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-uom">Unidad de medida</label>
+              <select id="product-create-uom"></select>
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-standard">Costo / StandardPrice</label>
+              <input id="product-create-standard" type="number" min="0" step="0.0001">
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-unit">UnitPrice</label>
+              <input id="product-create-unit" type="number" min="0" step="0.0001">
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-list">ListPrice</label>
+              <input id="product-create-list" type="number" min="0" step="0.0001" value="0">
+            </div>
+            <div class="product-create-field">
+              <label for="product-create-margin">Margen</label>
+              <input id="product-create-margin" type="number" step="0.01" value="0">
+            </div>
+          </div>
+          <div class="product-create-checks">
+            <label><input id="product-create-sale" type="checkbox" checked> Venta</label>
+            <label><input id="product-create-purchase" type="checkbox" checked> Compra</label>
+            <label><input id="product-create-expense" type="checkbox"> Gasto</label>
+            <label><input id="product-create-active" type="checkbox" checked> Activo</label>
+          </div>
+          <div id="product-create-status" class="product-create-status"></div>
+          <div class="product-create-actions">
+            <button id="product-create-cancel" class="invoice-btn secondary" type="button">Cancelar</button>
+            <button id="product-create-save" class="invoice-btn" type="button">Guardar producto</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
 <script>
 (function(){
   const select=document.getElementById('company-select');
@@ -340,7 +418,26 @@ body{min-height:100vh;background:
   const invoiceCorrection=document.getElementById('invoice-correction');
   const invoiceCorrect=document.getElementById('invoice-correct');
   const invoiceSave=document.getElementById('invoice-save');
+  const productCreateModal=document.getElementById('product-create-modal');
+  const productCreateClose=document.getElementById('product-create-close');
+  const productCreateCancel=document.getElementById('product-create-cancel');
+  const productCreateSave=document.getElementById('product-create-save');
+  const productCreateStatus=document.getElementById('product-create-status');
+  const productCreateCode=document.getElementById('product-create-code');
+  const productCreateName=document.getElementById('product-create-name');
+  const productCreateCategory=document.getElementById('product-create-category');
+  const productCreateUom=document.getElementById('product-create-uom');
+  const productCreateStandard=document.getElementById('product-create-standard');
+  const productCreateUnit=document.getElementById('product-create-unit');
+  const productCreateList=document.getElementById('product-create-list');
+  const productCreateMargin=document.getElementById('product-create-margin');
+  const productCreateType=document.getElementById('product-create-type');
+  const productCreateSale=document.getElementById('product-create-sale');
+  const productCreatePurchase=document.getElementById('product-create-purchase');
+  const productCreateExpense=document.getElementById('product-create-expense');
+  const productCreateActive=document.getElementById('product-create-active');
   let invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
+  let productCreateState={index:-1,catalog:null};
   let companies=[];
 
   const fields={
@@ -734,7 +831,7 @@ body{min-height:100vh;background:
 
   const invoiceFieldDefs=[
     ['categoria_comprobante','Clase de comprobante'],['proveedor','Proveedor'],['proveedor_cuit','CUIT proveedor'],['fecha','Fecha'],['tipo_comprobante','Tipo'],
-    ['punto_venta','Punto de venta'],['numero_comprobante','Número'],['subtotal','Subtotal'],['total_iva','IVA'],
+    ['punto_venta','Punto de venta'],['numero_comprobante','Número'],['subtotal','Subtotal'],['descuento_importe','Descuento'],['subtotal_gravado','Subtotal gravado'],['total_iva','IVA'],
     ['percepciones','Percepciones'],['total','Total'],['cae','CAE'],['cae_vencimiento','Vencimiento CAE']
   ];
   const transferFieldDefs=[
@@ -767,7 +864,11 @@ body{min-height:100vh;background:
   invoiceTop.addEventListener('click',()=>openInvoiceUpload(''));
   invoiceClose.addEventListener('click',closeInvoiceUpload);
   invoiceModal.addEventListener('click',e=>{if(e.target===invoiceModal)closeInvoiceUpload()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!invoiceModal.hidden)closeInvoiceUpload()});
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    if(!productCreateModal.hidden){closeProductCreate();return}
+    if(!invoiceModal.hidden)closeInvoiceUpload();
+  });
 
   function showInvoiceDocument(file){
     if(invoiceUploadState.previewUrl)URL.revokeObjectURL(invoiceUploadState.previewUrl);
@@ -824,6 +925,128 @@ body{min-height:100vh;background:
     const hash=await crypto.subtle.digest('SHA-256',buf);
     return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
   }
+  function parseInvoiceNumber(value){
+    let raw=String(value??'').trim().replace(/[^0-9,.-]/g,'');
+    if(!raw)return 0;
+    if(raw.includes(',')&&raw.includes('.'))raw=raw.replace(/\./g,'').replace(',','.');
+    else if(raw.includes(','))raw=raw.replace(',','.');
+    const n=Number(raw);
+    return Number.isFinite(n)?n:0;
+  }
+  function invoiceNumber(value){
+    return Number(value||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function prorateInvoiceDiscount(source){
+    const data=JSON.parse(JSON.stringify(source||{}));
+    const items=Array.isArray(data.items)?data.items:[];
+    const subtotal=parseInvoiceNumber(data.subtotal);
+    if(!subtotal||!items.length)return data;
+    let discount=parseInvoiceNumber(data.descuento_importe);
+    if(!discount){
+      const legacy=String(data.descuento||'');
+      if(!legacy.includes('%'))discount=parseInvoiceNumber(legacy);
+    }
+    let factor=1;
+    if(discount>0&&discount<subtotal)factor=(subtotal-discount)/subtotal;
+    else{
+      const gravado=parseInvoiceNumber(data.subtotal_gravado);
+      if(gravado>0&&gravado<subtotal)factor=gravado/subtotal;
+      else{
+        const pct=parseInvoiceNumber(data.descuento_porcentaje);
+        if(pct>0&&pct<100)factor=(100-pct)/100;
+      }
+    }
+    if(!(factor>0&&factor<.999999))return data;
+    const target=Math.round(subtotal*factor*100)/100;
+    let accumulated=0;
+    data.items=items.map((item,index)=>{
+      const qty=Math.max(parseInvoiceNumber(item?.cantidad)||1,0.000001);
+      const original=parseInvoiceNumber(item?.precio_unitario);
+      const originalAmount=parseInvoiceNumber(item?.importe)||original*qty;
+      let finalAmount=Math.round(originalAmount*factor*100)/100;
+      if(index===items.length-1)finalAmount=Math.round((target-accumulated)*100)/100;
+      accumulated=Math.round((accumulated+finalAmount)*100)/100;
+      const finalUnit=Math.round((finalAmount/qty)*100)/100;
+      return {...item,
+        precio_unitario_original:invoiceNumber(original),
+        descuento_prorrateado:invoiceNumber(Math.max(0,original-finalUnit)),
+        descuento_prorrateado_pct:Number(((1-factor)*100).toFixed(2)),
+        precio_unitario:invoiceNumber(finalUnit),
+        precio_unitario_final:invoiceNumber(finalUnit),
+        importe_original:invoiceNumber(originalAmount),
+        importe:invoiceNumber(finalAmount)
+      };
+    });
+    data.descuento_prorrateado=true;
+    return data;
+  }
+  function setProductCreateStatus(message,type=''){
+    productCreateStatus.className='product-create-status'+(type?' '+type:'');
+    productCreateStatus.textContent=message||'';
+  }
+  async function loadProductCatalog(){
+    if(productCreateState.catalog)return productCreateState.catalog;
+    const data=await window.RubenAuth.invoke('product_catalog');
+    productCreateState.catalog={categories:Array.isArray(data.categories)?data.categories:[],uoms:Array.isArray(data.uoms)?data.uoms:[]};
+    return productCreateState.catalog;
+  }
+  function closeProductCreate(){
+    productCreateModal.hidden=true;productCreateState.index=-1;setProductCreateStatus('');
+  }
+  async function openProductCreate(index){
+    invoiceUploadState.current=collectInvoicePreview();
+    const item=invoiceUploadState.current?.items?.[index];
+    if(!item)return;
+    productCreateState.index=index;productCreateModal.hidden=false;
+    setProductCreateStatus('Cargando categorías y unidades…');
+    try{
+      const catalog=await loadProductCatalog();
+      productCreateCategory.innerHTML='';productCreateUom.innerHTML='';
+      for(const c of catalog.categories){const o=document.createElement('option');o.value=String(c.id);o.textContent=String(c.name||('Categoría '+c.id));productCreateCategory.appendChild(o)}
+      for(const u of catalog.uoms){const o=document.createElement('option');o.value=String(u.id);o.textContent=String(u.name||('Unidad '+u.id));productCreateUom.appendChild(o)}
+      if(catalog.categories.some(c=>Number(c.id)===1))productCreateCategory.value='1';
+      if(catalog.uoms.some(u=>Number(u.id)===1))productCreateUom.value='1';
+      const code=String(item.codigo||'').trim(),desc=String(item.descripcion||'').trim();
+      productCreateCode.value=code;
+      productCreateName.value=code&&desc&&!desc.toLowerCase().includes(code.toLowerCase())?(desc+' '+code):desc||code;
+      const finalPrice=parseInvoiceNumber(item.precio_unitario_final||item.precio_unitario);
+      productCreateStandard.value=finalPrice?String(finalPrice):'0';
+      productCreateUnit.value=finalPrice?String(finalPrice):'0';
+      productCreateList.value='0';productCreateMargin.value='0';productCreateType.value='3';
+      productCreateSale.checked=true;productCreatePurchase.checked=true;productCreateExpense.checked=false;productCreateActive.checked=true;
+      setProductCreateStatus('Revisá los datos y guardá. El costo viene del precio unitario final con el descuento prorrateado.','ok');
+      productCreateName.focus();
+    }catch(error){setProductCreateStatus(error.message||'No pude cargar el ABM de producto.','bad')}
+  }
+  productCreateClose.addEventListener('click',closeProductCreate);
+  productCreateCancel.addEventListener('click',closeProductCreate);
+  productCreateModal.addEventListener('click',e=>{if(e.target===productCreateModal)closeProductCreate()});
+  productCreateSave.addEventListener('click',async()=>{
+    const index=productCreateState.index;if(index<0)return;
+    const name=String(productCreateName.value||'').trim();
+    if(!name){setProductCreateStatus('El nombre es obligatorio.','bad');return}
+    const categoryId=Number(productCreateCategory.value),uomId=Number(productCreateUom.value);
+    if(!categoryId||!uomId){setProductCreateStatus('Elegí categoría y unidad.','bad');return}
+    productCreateSave.disabled=true;setProductCreateStatus('Guardando producto en PostgreSQL…');
+    try{
+      const data=await window.RubenAuth.invoke('create_product',{
+        name,category_id:categoryId,uom_id:uomId,
+        standard_price:Number(productCreateStandard.value||0),unit_price:Number(productCreateUnit.value||0),
+        list_price:Number(productCreateList.value||0),margin:Number(productCreateMargin.value||0),
+        type:Number(productCreateType.value||3),sale_ok:productCreateSale.checked,purchase_ok:productCreatePurchase.checked,
+        can_be_expensed:productCreateExpense.checked,active:productCreateActive.checked
+      });
+      const id=Number(data.product_id||0);if(!id)throw new Error('No se recibió el ID del producto.');
+      invoiceUploadState.current=collectInvoicePreview();
+      const row=invoiceUploadState.current.items?.[index];
+      if(row){row.product_id=id;row.product_name=name;row.product_match_count=1;row.product_match_method='created'}
+      renderInvoicePreview(invoiceUploadState.current);
+      setInvoiceStatus('Producto creado con ID '+id+' y asociado a la línea del comprobante.','ok');
+      closeProductCreate();
+    }catch(error){setProductCreateStatus(error.message||'No pude crear el producto.','bad')}
+    finally{productCreateSave.disabled=false}
+  });
+
   function renderInvoicePreview(data){
     invoiceFields.innerHTML='';invoiceItems.innerHTML='';
     const isTransfer=String(data?.categoria_comprobante||'').toUpperCase()==='TRANSFERENCIA';
@@ -837,27 +1060,34 @@ body{min-height:100vh;background:
     const items=Array.isArray(data?.items)?data.items:[];
     items.forEach((item,index)=>{
       const tr=document.createElement('tr');tr.dataset.index=String(index);
-      for(const key of ['descripcion','product_id','cantidad','unidad','precio_unitario','iva_alicuota','importe']){
-        const td=document.createElement('td'),input=document.createElement('input');
-        input.dataset.itemField=key;
-        input.value=String(item?.[key]??'');
-        if(key==='product_id'){
-          input.readOnly=true;
-          const matches=Number(item?.product_match_count||0);
-          input.placeholder=matches>1?'Nombre duplicado':'Sin coincidencia';
-          input.title=matches===1
-            ? 'Coincidencia exacta con Products.Name'
-            : matches>1
-              ? 'Hay más de un Products.Name igual; no se asigna un ID automáticamente.'
-              : 'No hubo coincidencia exacta con Products.Name.';
-        }
-        td.appendChild(input);tr.appendChild(td);
+      const addInput=(key,value,cls='')=>{const td=document.createElement('td'),input=document.createElement('input');input.dataset.itemField=key;input.value=String(value??'');if(cls)input.className=cls;td.appendChild(input);tr.appendChild(td);return input};
+      addInput('codigo',item?.codigo);
+      addInput('descripcion',item?.descripcion);
+      const idTd=document.createElement('td'),productId=Number(item?.product_id||0);
+      if(productId>0){
+        const input=document.createElement('input');input.dataset.itemField='product_id';input.value=String(productId);input.readOnly=true;
+        input.title=item?.product_match_method==='code_in_name'?'Código de factura encontrado en Products.Name':'Producto vinculado';idTd.appendChild(input);
+      }else{
+        const btn=document.createElement('button');btn.type='button';btn.className='product-match-btn';btn.dataset.createProduct=String(index);
+        btn.textContent=Number(item?.product_match_count||0)>1?'Revisar / agregar':'Agregar producto';btn.title='Abrir alta de Products con los datos de esta línea';idTd.appendChild(btn);
       }
+      tr.appendChild(idTd);
+      addInput('cantidad',item?.cantidad);
+      addInput('unidad',item?.unidad);
+      addInput('precio_unitario_original',item?.precio_unitario_original||item?.precio_unitario,'price-original');
+      const descTd=document.createElement('td');descTd.className='discount-cell';descTd.textContent=Number(item?.descuento_prorrateado_pct||0)>0?(Number(item.descuento_prorrateado_pct).toLocaleString('es-AR',{maximumFractionDigits:2})+'%'):'—';tr.appendChild(descTd);
+      addInput('precio_unitario',item?.precio_unitario_final||item?.precio_unitario,'price-final');
+      addInput('iva_alicuota',item?.iva_alicuota);
+      addInput('importe',item?.importe);
       invoiceItems.appendChild(tr);
     });
     invoicePreview.hidden=false;
     invoiceDocumentPreview.hidden=!invoiceUploadState.file;
   }
+  invoiceItems.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-create-product]');
+    if(btn)openProductCreate(Number(btn.dataset.createProduct));
+  });
   function collectInvoicePreview(){
     const base=JSON.parse(JSON.stringify(invoiceUploadState.current||{}));
     invoiceFields.querySelectorAll('[data-invoice-field]').forEach(input=>{base[input.dataset.invoiceField]=input.value});
@@ -872,27 +1102,25 @@ body{min-height:100vh;background:
   async function enrichInvoiceProducts(source,failOnError=false){
     const data=JSON.parse(JSON.stringify(source||{}));
     const items=Array.isArray(data.items)?data.items:[];
-    const names=[...new Set(items.map(item=>String(item?.descripcion||'').trim()).filter(Boolean))];
-    if(!names.length)return {data,lookupError:''};
+    const lookupItems=items.map(item=>({descripcion:String(item?.descripcion||'').trim(),codigo:String(item?.codigo||'').trim()}));
+    if(!lookupItems.some(item=>item.descripcion||item.codigo))return {data,lookupError:''};
     try{
-      const lookup=await window.RubenAuth.invoke('product_lookup',{names});
+      const lookup=await window.RubenAuth.invoke('product_lookup',{items:lookupItems});
       const matches=Array.isArray(lookup?.matches)?lookup.matches:[];
-      const byName=new Map(matches.map(match=>[String(match?.requested_name||'').trim(),match]));
-      data.items=items.map(item=>{
-        const requested=String(item?.descripcion||'').trim();
-        const match=byName.get(requested);
-        const count=Number(match?.match_count||0);
-        return {
-          ...item,
+      const byIndex=new Map(matches.map(match=>[Number(match?.item_index),match]));
+      data.items=items.map((item,index)=>{
+        const match=byIndex.get(index),count=Number(match?.match_count||0);
+        return {...item,
           product_id:count===1&&Number(match?.product_id||0)>0?Number(match.product_id):null,
           product_name:count===1?String(match?.product_name||''):'',
+          product_match_method:String(match?.match_method||'not_found'),
           product_match_count:count
         };
       });
       return {data,lookupError:''};
     }catch(error){
       if(failOnError)throw new Error('No pude verificar los productos contra Products: '+(error.message||error));
-      data.items=items.map(item=>({...item,product_id:null,product_name:'',product_match_count:0}));
+      data.items=items.map(item=>({...item,product_id:null,product_name:'',product_match_method:'not_found',product_match_count:0}));
       return {data,lookupError:error.message||String(error)};
     }
   }
@@ -910,7 +1138,8 @@ body{min-height:100vh;background:
       const {data,error}=await window.RubenAuth.sb.functions.invoke('extract-invoice-json',{body});
       if(error)throw error;
       if(!data?.ok||!data?.data)throw new Error(data?.error||'No pude leer el comprobante.');
-      const enriched=await enrichInvoiceProducts(data.data,false);
+      const normalized=prorateInvoiceDiscount(data.data);
+      const enriched=await enrichInvoiceProducts(normalized,false);
       if(!invoiceUploadState.initialExtracted)invoiceUploadState.initialExtracted=JSON.parse(JSON.stringify(enriched.data));
       invoiceUploadState.current=enriched.data;
       renderInvoicePreview(enriched.data);
@@ -918,7 +1147,7 @@ body{min-height:100vh;background:
       const category=String(enriched.data?.categoria_comprobante||'').toUpperCase();
       const baseMessage=category==='TRANSFERENCIA'
         ? 'TRANSFERENCIA detectada. Revisá banco, referencia, origen/destino e importe antes de guardar.'
-        : 'Comprobante procesado. Los productos con coincidencia exacta en Products.Name ya muestran su ID. Revisá todo antes de guardar.';
+        : 'Comprobante procesado. Ruben busca productos por nombre y también por código dentro de Products.Name. Si hay descuento global, el precio unitario final queda prorrateado. Revisá todo antes de guardar.';
       setInvoiceStatus(
         enriched.lookupError
           ? baseMessage+' No pude buscar los ID de Products.'
