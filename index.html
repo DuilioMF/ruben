@@ -140,9 +140,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=013&h=15">
-<script src="theme.js?v=013&h=15" defer></script>
-<script type="module" src="ruben-auth.js?v=013&h=15"></script>
+<link rel="stylesheet" href="theme.css?v=014&h=16">
+<script src="theme.js?v=014&h=16" defer></script>
+<script type="module" src="ruben-auth.js?v=014&h=16"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -733,9 +733,15 @@ body{min-height:100vh;background:
   }
 
   const invoiceFieldDefs=[
-    ['proveedor','Proveedor'],['proveedor_cuit','CUIT proveedor'],['fecha','Fecha'],['tipo_comprobante','Tipo'],
+    ['categoria_comprobante','Clase de comprobante'],['proveedor','Proveedor'],['proveedor_cuit','CUIT proveedor'],['fecha','Fecha'],['tipo_comprobante','Tipo'],
     ['punto_venta','Punto de venta'],['numero_comprobante','Número'],['subtotal','Subtotal'],['total_iva','IVA'],
     ['percepciones','Percepciones'],['total','Total'],['cae','CAE'],['cae_vencimiento','Vencimiento CAE']
+  ];
+  const transferFieldDefs=[
+    ['categoria_comprobante','Clase de comprobante'],['tipo_comprobante','Tipo'],['fecha','Fecha'],['total','Importe'],['moneda','Moneda'],
+    ['banco_origen','Banco origen'],['titular_origen','Titular origen'],['cuenta_origen','Cuenta origen'],
+    ['banco_destino','Banco destino'],['titular_destino','Titular destino'],['cuenta_destino','Cuenta destino'],
+    ['referencia_operacion','Referencia / ID operación'],['estado_operacion','Estado']
   ];
 
   function setInvoiceStatus(message,type=''){
@@ -820,7 +826,9 @@ body{min-height:100vh;background:
   }
   function renderInvoicePreview(data){
     invoiceFields.innerHTML='';invoiceItems.innerHTML='';
-    for(const [key,label] of invoiceFieldDefs){
+    const isTransfer=String(data?.categoria_comprobante||'').toUpperCase()==='TRANSFERENCIA';
+    const defs=isTransfer?transferFieldDefs:invoiceFieldDefs;
+    for(const [key,label] of defs){
       const box=document.createElement('div');box.className='invoice-field';
       const lab=document.createElement('label');lab.textContent=label;
       const input=document.createElement('input');input.dataset.invoiceField=key;input.value=String(data?.[key]??'');
@@ -907,10 +915,14 @@ body{min-height:100vh;background:
       invoiceUploadState.current=enriched.data;
       renderInvoicePreview(enriched.data);
       invoiceCorrection.value='';
+      const category=String(enriched.data?.categoria_comprobante||'').toUpperCase();
+      const baseMessage=category==='TRANSFERENCIA'
+        ? 'TRANSFERENCIA detectada. Revisá banco, referencia, origen/destino e importe antes de guardar.'
+        : 'Comprobante procesado. Los productos con coincidencia exacta en Products.Name ya muestran su ID. Revisá todo antes de guardar.';
       setInvoiceStatus(
         enriched.lookupError
-          ? 'Comprobante procesado, pero no pude buscar los ID de Products. Podés reintentar antes de guardar.'
-          : 'Comprobante procesado. Los productos con coincidencia exacta en Products.Name ya muestran su ID. Revisá todo antes de guardar.',
+          ? baseMessage+' No pude buscar los ID de Products.'
+          : baseMessage,
         enriched.lookupError?'bad':'ok'
       );
     }catch(error){
