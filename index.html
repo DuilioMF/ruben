@@ -130,9 +130,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=010&h=11">
-<script src="theme.js?v=010&h=11" defer></script>
-<script type="module" src="ruben-auth.js?v=010&h=11"></script>
+<link rel="stylesheet" href="theme.css?v=010&h=12">
+<script src="theme.js?v=010&h=12" defer></script>
+<script type="module" src="ruben-auth.js?v=010&h=12"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -453,6 +453,13 @@ body{min-height:100vh;background:
         const open=()=>openSalesInvoice(item);
         tr.addEventListener('click',open);
         tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+      }else if(!finance && norm(item.estado)==='pedido' && Number(item.sale_order_id||0)>0){
+        tr.className='invoice-row';
+        tr.tabIndex=0;
+        tr.setAttribute('role','button');
+        const open=()=>openSalesOrder(item);
+        tr.addEventListener('click',open);
+        tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
       }
       const party=finance?safe(item.tercero):safe(item.cliente);
       const last=finance
@@ -542,8 +549,10 @@ body{min-height:100vh;background:
     modalStatus.textContent='Producto vinculado desde '+safe(invoiceItem?.comprobante);
     detailTable.hidden=true;detailExtra.hidden=false;detailExtra.innerHTML='';
     const sheet=document.createElement('section');sheet.className='product-sheet';
-    const back=document.createElement('button');back.type='button';back.className='detail-back';back.textContent='← Volver a la factura';
-    back.addEventListener('click',()=>openSalesInvoice(invoiceItem));
+    const back=document.createElement('button');back.type='button';back.className='detail-back';
+    const fromOrder=norm(invoiceItem?.estado)==='pedido';
+    back.textContent=fromOrder?'← Volver al pedido':'← Volver a la factura';
+    back.addEventListener('click',()=>fromOrder?openSalesOrder(invoiceItem):openSalesInvoice(invoiceItem));
     sheet.appendChild(back);
     const title=document.createElement('h4');title.textContent=safe(product.producto);sheet.appendChild(title);
     const summary=document.createElement('div');summary.className='invoice-summary';
@@ -561,6 +570,39 @@ body{min-height:100vh;background:
     appendInfo(summary,'Precio factura',money(product.precio_unitario));
     sheet.appendChild(summary);
     detailExtra.appendChild(sheet);
+  }
+
+  function openSalesOrder(item){
+    modalKicker.textContent='PEDIDO · PRODUCTOS';
+    modalTitle.textContent=safe(item.comprobante);
+    modalStatus.textContent=safe(item.cliente)+' · '+safe(item.fecha);
+    modalRows.innerHTML='';
+    detailTable.hidden=true;detailExtra.hidden=false;detailExtra.innerHTML='';
+
+    const summary=document.createElement('div');summary.className='invoice-summary';
+    appendInfo(summary,'Pedido ID',safe(item.sale_order_id));
+    appendInfo(summary,'Neto',money(item.neto));
+    appendInfo(summary,'Impuestos',money(item.impuestos));
+    appendInfo(summary,'Total',money(item.total));
+    appendInfo(summary,'Saldo',money(item.balance));
+    appendInfo(summary,'Estado','Pedido');
+    detailExtra.appendChild(summary);
+
+    const actions=document.createElement('div');actions.className='invoice-section';
+    const load=document.createElement('button');load.type='button';load.className='btn primary';load.textContent='Cargar factura';
+    load.addEventListener('click',()=>openInvoiceUpload(safe(item.comprobante)));
+    actions.appendChild(load);
+    detailExtra.appendChild(actions);
+
+    const prodSec=document.createElement('section');prodSec.className='invoice-section';
+    const ph=document.createElement('h4');ph.textContent='Productos del pedido';prodSec.appendChild(ph);
+    const productos=Array.isArray(item.productos)?item.productos:[];
+    if(productos.length)prodSec.appendChild(makeProductTable(productos,item));
+    else{
+      const empty=document.createElement('div');empty.className='detail-status';empty.textContent='Sin productos relacionados.';prodSec.appendChild(empty);
+    }
+    detailExtra.appendChild(prodSec);
+    modal.hidden=false;document.body.style.overflow='hidden';
   }
 
   function openSalesInvoice(item){
