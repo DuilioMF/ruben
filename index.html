@@ -126,6 +126,8 @@ body{min-height:100vh;background:
 .invoice-order-btn{margin-top:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer}
 .product-match-btn{width:100%;min-width:104px;border:1px solid var(--gold);background:color-mix(in srgb,var(--gold) 13%,var(--panel));color:var(--gold2);padding:7px 8px;font-size:9px;font-weight:900;cursor:pointer}
 .product-match-btn:hover{background:color-mix(in srgb,var(--gold) 22%,var(--panel))}
+.product-open-btn{width:100%;border:1px solid color-mix(in srgb,var(--good) 52%,var(--line));background:color-mix(in srgb,var(--good) 10%,var(--panel));color:var(--good);padding:7px 8px;font-size:9px;font-weight:900;cursor:pointer}
+.product-open-btn:hover{background:color-mix(in srgb,var(--good) 18%,var(--panel))}
 .invoice-items .price-original{color:var(--muted)}
 .invoice-items .price-final{border-color:color-mix(in srgb,var(--good) 50%,var(--line));font-weight:800}
 .invoice-items .discount-cell{min-width:78px;color:var(--gold2);font-weight:800;text-align:right}
@@ -158,9 +160,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=015&h=17">
-<script src="theme.js?v=015&h=17" defer></script>
-<script type="module" src="ruben-auth.js?v=015&h=17"></script>
+<link rel="stylesheet" href="theme.css?v=016&h=18">
+<script src="theme.js?v=016&h=18" defer></script>
+<script type="module" src="ruben-auth.js?v=016&h=18"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -328,7 +330,7 @@ body{min-height:100vh;background:
     <div id="product-create-modal" class="invoice-upload-modal product-create-modal" hidden>
       <section class="product-create-card" role="dialog" aria-modal="true" aria-labelledby="product-create-title">
         <div class="invoice-upload-head">
-          <div><small>PRODUCTS · ALTA</small><h3 id="product-create-title">Agregar producto</h3></div>
+          <div><small id="product-create-kicker">PRODUCTS · ALTA</small><h3 id="product-create-title">Agregar producto</h3></div>
           <button id="product-create-close" class="detail-close" type="button" aria-label="Cerrar">×</button>
         </div>
         <div class="product-create-body">
@@ -419,6 +421,8 @@ body{min-height:100vh;background:
   const invoiceCorrect=document.getElementById('invoice-correct');
   const invoiceSave=document.getElementById('invoice-save');
   const productCreateModal=document.getElementById('product-create-modal');
+  const productCreateTitle=document.getElementById('product-create-title');
+  const productCreateKicker=document.getElementById('product-create-kicker');
   const productCreateClose=document.getElementById('product-create-close');
   const productCreateCancel=document.getElementById('product-create-cancel');
   const productCreateSave=document.getElementById('product-create-save');
@@ -437,7 +441,7 @@ body{min-height:100vh;background:
   const productCreateExpense=document.getElementById('product-create-expense');
   const productCreateActive=document.getElementById('product-create-active');
   let invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
-  let productCreateState={index:-1,catalog:null};
+  let productCreateState={index:-1,catalog:null,mode:'create',productId:null};
   let companies=[];
 
   const fields={
@@ -991,19 +995,94 @@ body{min-height:100vh;background:
     return productCreateState.catalog;
   }
   function closeProductCreate(){
-    productCreateModal.hidden=true;productCreateState.index=-1;setProductCreateStatus('');
+    productCreateModal.hidden=true;
+    productCreateState.index=-1;
+    productCreateState.mode='create';
+    productCreateState.productId=null;
+    productCreateTitle.textContent='Agregar producto';
+    productCreateKicker.textContent='PRODUCTS · ALTA';
+    productCreateSave.textContent='Guardar producto';
+    setProductCreateStatus('');
+  }
+  async function invokeRubenAction(action,payload={}){
+    const sb=window.RubenAuth?.sb;
+    if(!sb)throw new Error('Ruben no está autenticado.');
+    const {data,error}=await sb.functions.invoke('ruben-actions',{body:{action,...payload}});
+    if(error){
+      let parsed=null;
+      try{parsed=await error.context?.clone?.().json()}catch(_){}
+      throw new Error(parsed?.message||error.message||'No pude ejecutar la acción.');
+    }
+    if(data?.error)throw new Error(data.message||data.error);
+    return data;
+  }
+  const productValue=(p,...keys)=>{
+    for(const k of keys){
+      if(p&&p[k]!==undefined&&p[k]!==null)return p[k];
+    }
+    return null;
+  };
+  function fillProductSelect(selectEl,value){
+    const v=String(value??'');
+    if(v&&Array.from(selectEl.options).some(o=>o.value===v))selectEl.value=v;
+  }
+  async function prepareProductCatalog(){
+    const catalog=await loadProductCatalog();
+    productCreateCategory.innerHTML='';productCreateUom.innerHTML='';
+    for(const c of catalog.categories){const o=document.createElement('option');o.value=String(c.id);o.textContent=String(c.name||('Categoría '+c.id));productCreateCategory.appendChild(o)}
+    for(const u of catalog.uoms){const o=document.createElement('option');o.value=String(u.id);o.textContent=String(u.name||('Unidad '+u.id));productCreateUom.appendChild(o)}
+    return catalog;
+  }
+  async function openProductEdit(index){
+    invoiceUploadState.current=collectInvoicePreview();
+    const item=invoiceUploadState.current?.items?.[index];
+    const productId=Number(item?.product_id||0);
+    if(!item||!productId)return;
+    productCreateState.index=index;
+    productCreateState.mode='edit';
+    productCreateState.productId=productId;
+    productCreateModal.hidden=false;
+    productCreateTitle.textContent='Producto #'+productId;
+    productCreateKicker.textContent='PRODUCTS · CONSULTA / EDICIÓN';
+    productCreateSave.textContent='Guardar cambios';
+    productCreateCode.value=String(item.codigo||'');
+    setProductCreateStatus('Leyendo el producto real desde PostgreSQL…');
+    try{
+      await prepareProductCatalog();
+      const data=await invokeRubenAction('get_product',{product_id:productId});
+      const p=data?.product||{};
+      productCreateName.value=String(productValue(p,'Name','name','product_name')||item.product_name||item.descripcion||'');
+      productCreateType.value=String(productValue(p,'type','Type','product_type')??3);
+      productCreateStandard.value=String(productValue(p,'StandardPrice','standardPrice','standard_price')??0);
+      productCreateUnit.value=String(productValue(p,'UnitPrice','unitPrice','unit_price')??0);
+      productCreateList.value=String(productValue(p,'ListPrice','listPrice','list_price')??0);
+      productCreateMargin.value=String(productValue(p,'Margin','margin')??0);
+      productCreateSale.checked=Boolean(productValue(p,'SaleOK','saleOK','sale_ok')??true);
+      productCreatePurchase.checked=Boolean(productValue(p,'PurchaseOK','purchaseOK','purchase_ok')??true);
+      productCreateExpense.checked=Boolean(productValue(p,'CanBeExpensed','canBeExpensed','can_be_expensed')??false);
+      productCreateActive.checked=Boolean(productValue(p,'Active','active')??true);
+      fillProductSelect(productCreateCategory,productValue(p,'CategoryID','categoryID','category_id'));
+      fillProductSelect(productCreateUom,productValue(p,'ProductUnitOfMeasureID','productUnitOfMeasureID','uom_id'));
+      setProductCreateStatus('Producto cargado. Podés revisar y modificar sus datos.','ok');
+      productCreateName.focus();
+    }catch(error){
+      setProductCreateStatus(error.message||'No pude leer el producto.','bad');
+    }
   }
   async function openProductCreate(index){
     invoiceUploadState.current=collectInvoicePreview();
     const item=invoiceUploadState.current?.items?.[index];
     if(!item)return;
-    productCreateState.index=index;productCreateModal.hidden=false;
+    productCreateState.index=index;
+    productCreateState.mode='create';
+    productCreateState.productId=null;
+    productCreateModal.hidden=false;
+    productCreateTitle.textContent='Agregar producto';
+    productCreateKicker.textContent='PRODUCTS · ALTA';
+    productCreateSave.textContent='Guardar producto';
     setProductCreateStatus('Cargando categorías y unidades…');
     try{
-      const catalog=await loadProductCatalog();
-      productCreateCategory.innerHTML='';productCreateUom.innerHTML='';
-      for(const c of catalog.categories){const o=document.createElement('option');o.value=String(c.id);o.textContent=String(c.name||('Categoría '+c.id));productCreateCategory.appendChild(o)}
-      for(const u of catalog.uoms){const o=document.createElement('option');o.value=String(u.id);o.textContent=String(u.name||('Unidad '+u.id));productCreateUom.appendChild(o)}
+      const catalog=await prepareProductCatalog();
       if(catalog.categories.some(c=>Number(c.id)===1))productCreateCategory.value='1';
       if(catalog.uoms.some(u=>Number(u.id)===1))productCreateUom.value='1';
       const code=String(item.codigo||'').trim(),desc=String(item.descripcion||'').trim();
@@ -1027,23 +1106,34 @@ body{min-height:100vh;background:
     if(!name){setProductCreateStatus('El nombre es obligatorio.','bad');return}
     const categoryId=Number(productCreateCategory.value),uomId=Number(productCreateUom.value);
     if(!categoryId||!uomId){setProductCreateStatus('Elegí categoría y unidad.','bad');return}
-    productCreateSave.disabled=true;setProductCreateStatus('Guardando producto en PostgreSQL…');
+    const payload={
+      name,category_id:categoryId,uom_id:uomId,
+      standard_price:Number(productCreateStandard.value||0),unit_price:Number(productCreateUnit.value||0),
+      list_price:Number(productCreateList.value||0),margin:Number(productCreateMargin.value||0),
+      type:Number(productCreateType.value||3),sale_ok:productCreateSale.checked,purchase_ok:productCreatePurchase.checked,
+      can_be_expensed:productCreateExpense.checked,active:productCreateActive.checked
+    };
+    productCreateSave.disabled=true;
+    setProductCreateStatus(productCreateState.mode==='edit'?'Guardando cambios en PostgreSQL…':'Guardando producto en PostgreSQL…');
     try{
-      const data=await window.RubenAuth.invoke('create_product',{
-        name,category_id:categoryId,uom_id:uomId,
-        standard_price:Number(productCreateStandard.value||0),unit_price:Number(productCreateUnit.value||0),
-        list_price:Number(productCreateList.value||0),margin:Number(productCreateMargin.value||0),
-        type:Number(productCreateType.value||3),sale_ok:productCreateSale.checked,purchase_ok:productCreatePurchase.checked,
-        can_be_expensed:productCreateExpense.checked,active:productCreateActive.checked
-      });
-      const id=Number(data.product_id||0);if(!id)throw new Error('No se recibió el ID del producto.');
+      let id=productCreateState.productId;
+      if(productCreateState.mode==='edit'){
+        if(!id)throw new Error('No se recibió el ID del producto.');
+        await invokeRubenAction('update_product',{product_id:id,...payload});
+      }else{
+        const data=await window.RubenAuth.invoke('create_product',payload);
+        id=Number(data.product_id||0);
+        if(!id)throw new Error('No se recibió el ID del producto.');
+      }
       invoiceUploadState.current=collectInvoicePreview();
       const row=invoiceUploadState.current.items?.[index];
-      if(row){row.product_id=id;row.product_name=name;row.product_match_count=1;row.product_match_method='created'}
+      if(row){row.product_id=id;row.product_name=name;row.product_match_count=1;row.product_match_method=productCreateState.mode==='edit'?'updated':'created'}
       renderInvoicePreview(invoiceUploadState.current);
-      setInvoiceStatus('Producto creado con ID '+id+' y asociado a la línea del comprobante.','ok');
+      setInvoiceStatus(productCreateState.mode==='edit'
+        ?'Producto #'+id+' actualizado y vinculado a la línea.'
+        :'Producto creado con ID '+id+' y asociado a la línea del comprobante.','ok');
       closeProductCreate();
-    }catch(error){setProductCreateStatus(error.message||'No pude crear el producto.','bad')}
+    }catch(error){setProductCreateStatus(error.message||'No pude guardar el producto.','bad')}
     finally{productCreateSave.disabled=false}
   });
 
@@ -1065,8 +1155,9 @@ body{min-height:100vh;background:
       addInput('descripcion',item?.descripcion);
       const idTd=document.createElement('td'),productId=Number(item?.product_id||0);
       if(productId>0){
-        const input=document.createElement('input');input.dataset.itemField='product_id';input.value=String(productId);input.readOnly=true;
-        input.title=item?.product_match_method==='code_in_name'?'Código de factura encontrado en Products.Name':'Producto vinculado';idTd.appendChild(input);
+        const input=document.createElement('input');input.dataset.itemField='product_id';input.value=String(productId);input.readOnly=true;input.hidden=true;idTd.appendChild(input);
+        const btn=document.createElement('button');btn.type='button';btn.className='product-open-btn';btn.dataset.editProduct=String(index);btn.textContent=String(productId);
+        btn.title='Abrir producto #'+productId+' para consultar o modificar';idTd.appendChild(btn);
       }else{
         const btn=document.createElement('button');btn.type='button';btn.className='product-match-btn';btn.dataset.createProduct=String(index);
         btn.textContent=Number(item?.product_match_count||0)>1?'Revisar / agregar':'Agregar producto';btn.title='Abrir alta de Products con los datos de esta línea';idTd.appendChild(btn);
@@ -1085,6 +1176,8 @@ body{min-height:100vh;background:
     invoiceDocumentPreview.hidden=!invoiceUploadState.file;
   }
   invoiceItems.addEventListener('click',e=>{
+    const edit=e.target.closest('[data-edit-product]');
+    if(edit){openProductEdit(Number(edit.dataset.editProduct));return}
     const btn=e.target.closest('[data-create-product]');
     if(btn)openProductCreate(Number(btn.dataset.createProduct));
   });
@@ -1177,6 +1270,50 @@ body{min-height:100vh;background:
     });
     if(ins.error)throw ins.error;
   }
+  function invoiceDateISO(value){
+    const raw=String(value||'').trim();
+    if(/^\d{4}-\d{2}-\d{2}/.test(raw))return raw.slice(0,10);
+    const m=raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+    if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+    return localISO();
+  }
+  async function createPurchaseOrderFromInvoice(confirmed){
+    if(String(confirmed?.categoria_comprobante||'').toUpperCase()==='TRANSFERENCIA')return {skipped:true,message:'Transferencia: no genera orden de compra.'};
+    const items=Array.isArray(confirmed?.items)?confirmed.items:[];
+    if(!items.length)return {skipped:true,message:'El comprobante no tiene líneas para una orden de compra.'};
+    const missing=items.filter(x=>Number(x?.product_id||0)<=0);
+    if(missing.length)return {skipped:true,message:'Faltan vincular '+missing.length+' producto'+(missing.length===1?'':'s')+'; la orden de compra no se creó.'};
+    const supplierCuit=String(confirmed?.proveedor_cuit||'').replace(/\D/g,'');
+    if(!supplierCuit)return {skipped:true,message:'Falta el CUIT del proveedor; la orden de compra no se creó.'};
+    const type=String(confirmed?.tipo_comprobante||'COMPRA').trim().toUpperCase()||'COMPRA';
+    const pv=String(confirmed?.punto_venta||'').replace(/\D/g,'');
+    const nro=String(confirmed?.numero_comprobante||'').replace(/\D/g,'');
+    const partnerReference=[type,pv,nro].filter(Boolean).join('-');
+    if(!partnerReference)return {skipped:true,message:'Falta la referencia del comprobante; la orden de compra no se creó.'};
+    const date=invoiceDateISO(confirmed?.fecha);
+    const net=parseInvoiceNumber(confirmed?.subtotal_gravado)||items.reduce((a,x)=>a+parseInvoiceNumber(x?.importe),0);
+    const total=parseInvoiceNumber(confirmed?.total);
+    const tax=total>net?total-net:parseInvoiceNumber(confirmed?.total_iva);
+    const payload={
+      supplier_cuit:supplierCuit,
+      partner_reference:partnerReference,
+      date_order:date,date_planned:date,due_date:date,
+      net_amount:Number(net.toFixed(4)),
+      tax_amount:Number(Math.max(0,tax).toFixed(4)),
+      discount_amount:Number(parseInvoiceNumber(confirmed?.descuento_importe).toFixed(4)),
+      total_amount:Number((total||net+tax).toFixed(4)),
+      notes:'Ruben · '+String(confirmed?.proveedor||'Proveedor')+' · '+partnerReference,
+      items:items.map(x=>({
+        product_id:Number(x.product_id),
+        description:String(x.descripcion||x.product_name||''),
+        quantity:parseInvoiceNumber(x.cantidad)||1,
+        unit_price:parseInvoiceNumber(x.precio_unitario_final||x.precio_unitario),
+        iva_alicuota:parseInvoiceNumber(x.iva_alicuota)
+      }))
+    };
+    const data=await invokeRubenAction('create_purchase_order',payload);
+    return {skipped:false,...data};
+  }
 
   async function saveInvoiceUpload(){
     const sb=window.RubenAuth?.sb;
@@ -1218,9 +1355,13 @@ body{min-height:100vh;background:
       }
       if(existing){
         if(pedidoRef) await ensurePedidoLink(sb,existing.id,companyId,pedidoRef);
-        setInvoiceStatus(pedidoRef
+        let po=null;
+        try{po=await createPurchaseOrderFromInvoice(confirmed)}catch(error){po={skipped:true,message:'Orden de compra: '+(error.message||error)}}
+        const base=pedidoRef
           ? 'El comprobante ya estaba cargado. Lo asocié también al pedido '+pedidoRef+'.'
-          : 'El comprobante ya estaba cargado. No se duplicó.','ok');
+          : 'El comprobante ya estaba cargado. No se duplicó.';
+        const poMsg=po?.skipped?po.message:(po?.existing?' Orden '+po.purchase_order_name+' ya existía.':' Orden '+po?.purchase_order_name+' creada con '+Number(po?.item_count||0)+' línea(s).');
+        setInvoiceStatus(base+' '+poMsg,po?.skipped?'bad':'ok');
         return;
       }
 
@@ -1247,9 +1388,13 @@ body{min-height:100vh;background:
       insertedId=ins.data.id;
 
       if(pedidoRef) await ensurePedidoLink(sb,insertedId,companyId,pedidoRef);
-      setInvoiceStatus(pedidoRef
+      let po=null;
+      try{po=await createPurchaseOrderFromInvoice(confirmed)}catch(error){po={skipped:true,message:'Orden de compra: '+(error.message||error)}}
+      const base=pedidoRef
         ? 'Comprobante guardado y asociado al pedido '+pedidoRef+'.'
-        : 'Comprobante guardado. Podés asociarlo a un pedido después.','ok');
+        : 'Comprobante guardado.';
+      const poMsg=po?.skipped?po.message:(po?.existing?' Orden '+po.purchase_order_name+' ya existía.':' Orden '+po?.purchase_order_name+' creada con '+Number(po?.item_count||0)+' línea(s).');
+      setInvoiceStatus(base+' '+poMsg,po?.skipped?'bad':'ok');
     }catch(error){
       if(insertedId)await sb.from('ruben_invoice_uploads').delete().eq('id',insertedId);
       if(uploadedPath)await sb.storage.from('ruben-invoices').remove([uploadedPath]);
