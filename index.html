@@ -134,6 +134,7 @@ body{min-height:100vh;background:
 .invoice-items .price-original{color:var(--muted)}
 .invoice-items .price-final{border-color:color-mix(in srgb,var(--good) 50%,var(--line));font-weight:800}
 .invoice-items .discount-cell{min-width:78px;color:var(--gold2);font-weight:800;text-align:right}
+.product-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.product-extra-grid>div{border:1px solid var(--line);background:var(--panel);padding:12px;min-width:0}.product-extra-grid small,.product-image-label{display:block;color:var(--gold2);font-size:10px;margin-bottom:8px}.product-extra-grid b{font-size:12px;overflow-wrap:anywhere}.product-detail-image{display:block;max-width:100%;width:160px;height:160px;object-fit:contain;margin:10px 0}@media(max-width:600px){.product-extra-grid{grid-template-columns:1fr}}
 .product-create-modal{z-index:23000}
 .product-create-card{width:min(760px,96vw);max-height:92vh;overflow:auto;border:1px solid var(--gold);background:var(--bg);box-shadow:0 35px 120px #000d}
 .product-create-body{padding:18px}
@@ -163,9 +164,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=018&h=19">
-<script src="theme.js?v=018&h=19" defer></script>
-<script type="module" src="ruben-auth.js?v=018&h=19"></script>
+<link rel="stylesheet" href="theme.css?v=019&h=19">
+<script src="theme.js?v=019&h=19" defer></script>
+<script type="module" src="ruben-auth.js?v=019&h=19"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -363,7 +364,7 @@ body{min-height:100vh;background:
               <input id="product-create-type" type="number" value="3">
             </div>
             <div class="product-create-field wide">
-              <label for="product-create-name">Nombre en Products</label>
+              <label for="product-create-name">Nombre del producto</label>
               <input id="product-create-name" type="text">
             </div>
             <div class="product-create-field">
@@ -375,15 +376,15 @@ body{min-height:100vh;background:
               <select id="product-create-uom"></select>
             </div>
             <div class="product-create-field">
-              <label for="product-create-standard">Costo / StandardPrice</label>
+              <label for="product-create-standard">Precio de costo</label>
               <input id="product-create-standard" type="number" min="0" step="0.0001">
             </div>
             <div class="product-create-field">
-              <label for="product-create-unit">UnitPrice</label>
+              <label for="product-create-unit">Precio unitario</label>
               <input id="product-create-unit" type="number" min="0" step="0.0001">
             </div>
             <div class="product-create-field">
-              <label for="product-create-list">ListPrice</label>
+              <label for="product-create-list">Precio de venta</label>
               <input id="product-create-list" type="number" min="0" step="0.0001" value="0">
             </div>
             <div class="product-create-field">
@@ -397,6 +398,7 @@ body{min-height:100vh;background:
             <label><input id="product-create-expense" type="checkbox"> Gasto</label>
             <label><input id="product-create-active" type="checkbox" checked> Activo</label>
           </div>
+          <section id="product-create-details" aria-label="Datos e impuestos del producto" hidden></section>
           <div id="product-create-status" class="product-create-status"></div>
           <div class="product-create-actions">
             <button id="product-create-cancel" class="invoice-btn secondary" type="button">Cancelar</button>
@@ -406,6 +408,7 @@ body{min-height:100vh;background:
       </section>
     </div>
 
+<script src="product-details.js?v=019"></script>
 <script>
 (function(){
   const select=document.getElementById('company-select');
@@ -697,33 +700,30 @@ body{min-height:100vh;background:
     table.appendChild(tbody);return table;
   }
 
-  function showProductDetail(product,invoiceItem){
-    modalKicker.textContent='PRODUCTO · '+safe(product.product_id);
+  async function showProductDetail(product,invoiceItem){
+    const id=Number(product.product_id);
+    modalKicker.textContent='PRODUCTO · '+safe(id);
     modalTitle.textContent=safe(product.producto);
-    modalStatus.textContent='Producto vinculado desde '+safe(invoiceItem?.comprobante);
+    modalStatus.textContent='Leyendo la ficha del producto…';
     detailTable.hidden=true;detailExtra.hidden=false;detailExtra.innerHTML='';
     const sheet=document.createElement('section');sheet.className='product-sheet';
     const back=document.createElement('button');back.type='button';back.className='detail-back';
     const fromOrder=norm(invoiceItem?.estado)==='pedido';
     back.textContent=fromOrder?'← Volver al pedido':'← Volver a la factura';
     back.addEventListener('click',()=>fromOrder?openSalesOrder(invoiceItem):openSalesInvoice(invoiceItem));
-    sheet.appendChild(back);
-    const title=document.createElement('h4');title.textContent=safe(product.producto);sheet.appendChild(title);
-    const summary=document.createElement('div');summary.className='invoice-summary';
-    appendInfo(summary,'Product ID',safe(product.product_id));
-    appendInfo(summary,'Activo',product.activo===true?'Sí':product.activo===false?'No':'—');
-    appendInfo(summary,'Vendible',product.vendible===true?'Sí':product.vendible===false?'No':'—');
-    appendInfo(summary,'Comprable',product.comprable===true?'Sí':product.comprable===false?'No':'—');
-    appendInfo(summary,'Gasto',product.es_gasto===true?'Sí':product.es_gasto===false?'No':'—');
-    appendInfo(summary,'Precio lista',money(product.precio_lista));
-    appendInfo(summary,'Costo estándar',money(product.costo_estandar));
-    appendInfo(summary,'Margen',product.margen==null?'—':Number(product.margen).toLocaleString('es-AR',{maximumFractionDigits:2})+'%');
-    appendInfo(summary,'Categoría',safe(product.categoria||product.category_id));
-    appendInfo(summary,'Unidad',safe(product.unidad_medida));
-    appendInfo(summary,'Cantidad factura',String(Number(product.cantidad||0)));
-    appendInfo(summary,'Precio factura',money(product.precio_unitario));
-    sheet.appendChild(summary);
-    detailExtra.appendChild(sheet);
+    sheet.appendChild(back);detailExtra.appendChild(sheet);
+    try{
+      const data=await invokeRubenAction('get_product',{product_id:id});
+      if(!sheet.isConnected)return;
+      const p=data.product;
+      const title=document.createElement('h4');title.textContent=p.name;sheet.appendChild(title);
+      const summary=document.createElement('div');summary.className='invoice-summary';
+      const yes=v=>v===true?'Sí':v===false?'No':'No disponible';
+      for(const [label,value] of [['ID',p.id],['Nombre',p.name],['Activo',yes(p.active)],['Vendible',yes(p.sale_ok)],['Comprable',yes(p.purchase_ok)],['Puede ser gasto',yes(p.can_be_expensed)],['Tipo',Number(p.type)===3?'Producto':p.type],['Categoría',p.category_name],['Unidad de medida',p.uom_name],['Precio de venta',p.list_price==null?'No disponible':money(p.list_price)],['Precio unitario',p.unit_price==null?'No disponible':money(p.unit_price)],['Precio de costo',p.standard_price==null?'No disponible':money(p.standard_price)],['Margen (%)',p.margin==null?'No disponible':Number(p.margin).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+' %']])appendInfo(summary,label,safe(value));
+      sheet.appendChild(summary);
+      const extras=document.createElement('section');window.RubenProductDetails.render(extras,p);sheet.appendChild(extras);
+      modalStatus.textContent='Producto vinculado desde '+safe(invoiceItem?.comprobante);
+    }catch(error){if(sheet.isConnected)modalStatus.textContent='No pude leer la ficha: '+(error.message||error)}
   }
 
   function openSalesOrder(item){
@@ -1025,10 +1025,12 @@ body{min-height:100vh;background:
     productCreateModal.hidden=true;
     productCreateState.index=-1;
     productCreateState.mode='create';
+    document.getElementById('product-create-details').hidden=true;
     productCreateState.productId=null;
     productCreateTitle.textContent='Agregar producto';
     productCreateKicker.textContent='PRODUCTS · ALTA';
     productCreateSave.textContent='Guardar producto';
+    productCreateSave.disabled=false;
     setProductCreateStatus('');
   }
   async function invokeRubenAction(action,payload={}){
@@ -1049,9 +1051,10 @@ body{min-height:100vh;background:
     }
     return null;
   };
-  function fillProductSelect(selectEl,value){
+  function fillProductSelect(selectEl,value,name){
     const v=String(value??'');
-    if(v&&Array.from(selectEl.options).some(o=>o.value===v))selectEl.value=v;
+    if(v&&!Array.from(selectEl.options).some(o=>o.value===v)){const option=document.createElement('option');option.value=v;option.textContent=String(name||('ID '+v));selectEl.appendChild(option)}
+    selectEl.value=v;
   }
   async function prepareProductCatalog(){
     const catalog=await loadProductCatalog();
@@ -1073,11 +1076,14 @@ body{min-height:100vh;background:
     productCreateKicker.textContent='PRODUCTS · CONSULTA / EDICIÓN';
     productCreateSave.textContent='Guardar cambios';
     productCreateCode.value=String(item.codigo||'');
+    const extras=document.getElementById('product-create-details');extras.hidden=false;extras.textContent='Leyendo impuestos y datos del producto…';
+    productCreateSave.disabled=true;
     setProductCreateStatus('Leyendo el producto real desde PostgreSQL…');
     try{
       await prepareProductCatalog();
       const data=await invokeRubenAction('get_product',{product_id:productId});
       const p=data?.product||{};
+      window.RubenProductDetails.render(extras,p);
       productCreateName.value=String(productValue(p,'Name','name','product_name')||item.product_name||item.descripcion||'');
       productCreateType.value=String(productValue(p,'type','Type','product_type')??3);
       productCreateStandard.value=String(productValue(p,'StandardPrice','standardPrice','standard_price')??0);
@@ -1088,8 +1094,9 @@ body{min-height:100vh;background:
       productCreatePurchase.checked=Boolean(productValue(p,'PurchaseOK','purchaseOK','purchase_ok')??true);
       productCreateExpense.checked=Boolean(productValue(p,'CanBeExpensed','canBeExpensed','can_be_expensed')??false);
       productCreateActive.checked=Boolean(productValue(p,'Active','active')??true);
-      fillProductSelect(productCreateCategory,productValue(p,'CategoryID','categoryID','category_id'));
-      fillProductSelect(productCreateUom,productValue(p,'ProductUnitOfMeasureID','productUnitOfMeasureID','uom_id'));
+      fillProductSelect(productCreateCategory,productValue(p,'CategoryID','categoryID','category_id'),p.category_name);
+      fillProductSelect(productCreateUom,productValue(p,'ProductUnitOfMeasureID','productUnitOfMeasureID','uom_id'),p.uom_name);
+      productCreateSave.disabled=false;
       setProductCreateStatus('Producto cargado. Podés revisar y modificar sus datos.','ok');
       productCreateName.focus();
     }catch(error){
@@ -1102,11 +1109,13 @@ body{min-height:100vh;background:
     if(!item)return;
     productCreateState.index=index;
     productCreateState.mode='create';
+    document.getElementById('product-create-details').hidden=true;
     productCreateState.productId=null;
     productCreateModal.hidden=false;
     productCreateTitle.textContent='Agregar producto';
     productCreateKicker.textContent='PRODUCTS · ALTA';
     productCreateSave.textContent='Guardar producto';
+    productCreateSave.disabled=false;
     setProductCreateStatus('Cargando categorías y unidades…');
     try{
       const catalog=await prepareProductCatalog();
