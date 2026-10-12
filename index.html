@@ -160,9 +160,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=016&h=18">
-<script src="theme.js?v=016&h=18" defer></script>
-<script type="module" src="ruben-auth.js?v=016&h=18"></script>
+<link rel="stylesheet" href="theme.css?v=017&h=18">
+<script src="theme.js?v=017&h=18" defer></script>
+<script type="module" src="ruben-auth.js?v=017&h=18"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -1360,7 +1360,7 @@ body{min-height:100vh;background:
         const base=pedidoRef
           ? 'El comprobante ya estaba cargado. Lo asocié también al pedido '+pedidoRef+'.'
           : 'El comprobante ya estaba cargado. No se duplicó.';
-        const poMsg=po?.skipped?po.message:(po?.existing?' Orden '+po.purchase_order_name+' ya existía.':' Orden '+po?.purchase_order_name+' creada con '+Number(po?.item_count||0)+' línea(s).');
+        const poMsg=po?.skipped?po.message:(po?.existing?' Orden '+po.purchase_order_name+' ya existía.':' Orden '+po?.purchase_order_name+' creada con '+Number(po?.item_count||0)+' línea(s) y '+Number(po?.tax_count||0)+' impuesto(s).');
         setInvoiceStatus(base+' '+poMsg,po?.skipped?'bad':'ok');
         return;
       }
@@ -1393,7 +1393,7 @@ body{min-height:100vh;background:
       const base=pedidoRef
         ? 'Comprobante guardado y asociado al pedido '+pedidoRef+'.'
         : 'Comprobante guardado.';
-      const poMsg=po?.skipped?po.message:(po?.existing?' Orden '+po.purchase_order_name+' ya existía.':' Orden '+po?.purchase_order_name+' creada con '+Number(po?.item_count||0)+' línea(s).');
+      const poMsg=po?.skipped?po.message:(po?.existing?' Orden '+po.purchase_order_name+' ya existía.':' Orden '+po?.purchase_order_name+' creada con '+Number(po?.item_count||0)+' línea(s) y '+Number(po?.tax_count||0)+' impuesto(s).');
       setInvoiceStatus(base+' '+poMsg,po?.skipped?'bad':'ok');
     }catch(error){
       if(insertedId)await sb.from('ruben_invoice_uploads').delete().eq('id',insertedId);
