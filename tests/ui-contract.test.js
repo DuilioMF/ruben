@@ -76,3 +76,21 @@ test('Reconoce transferencias como comprobante bancario',()=>{
   assert.match(html,/Banco origen/);
   assert.match(html,/Banco destino/);
 });
+
+
+test('Permite abrir y modificar un producto existente',()=>{
+  assert.match(html,/data-edit-product/);
+  assert.match(html,/openProductEdit/);
+  assert.match(html,/ruben-actions/);
+  assert.match(html,/get_product/);
+  assert.match(html,/update_product/);
+  assert.match(html,/Guardar cambios/);
+});
+
+test('Al guardar un comprobante intenta crear la orden de compra',()=>{
+  assert.match(html,/createPurchaseOrderFromInvoice/);
+  assert.match(html,/create_purchase_order/);
+  assert.match(html,/partner_reference/);
+  assert.match(html,/supplier_cuit/);
+  assert.match(html,/purchase_order_name/);
+});
