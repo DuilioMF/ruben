@@ -120,7 +120,7 @@ body{min-height:100vh;background:
 .invoice-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
 .invoice-field label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.12em;margin-bottom:5px;text-transform:uppercase}
 .invoice-field input,.invoice-correction textarea{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:10px;font:500 11px Inter}
-.invoice-items{width:100%;border-collapse:collapse;font-size:10px}.invoice-items th,.invoice-items td{border-bottom:1px solid var(--line);padding:7px}.invoice-items th{color:var(--gold2);text-align:left;background:var(--panel2)}.invoice-items input{width:100%;min-width:80px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px;font-size:10px}
+.invoice-items{width:100%;border-collapse:collapse;font-size:10px}.invoice-items th,.invoice-items td{border-bottom:1px solid var(--line);padding:7px}.invoice-items th{color:var(--gold2);text-align:left;background:var(--panel2)}.invoice-items select{width:100%;min-width:100px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px;font-size:10px}.invoice-code-btn{width:100%;border:1px solid var(--gold);background:var(--panel2);color:var(--gold2);padding:7px;font-size:10px;font-weight:800;cursor:pointer}.invoice-code-edit{margin-top:5px;font-size:9px!important}.invoice-items input{width:100%;min-width:80px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px;font-size:10px}
 .invoice-items tfoot td{background:var(--panel2);color:var(--gold2);font-weight:900;border-top:2px solid var(--gold);white-space:nowrap}.invoice-total-row td:nth-last-child(-n+2){text-align:right}
 .invoice-control-totals{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:8px;margin-top:10px}.invoice-control-totals>div{border:1px solid var(--line);background:var(--panel);padding:9px 10px}.invoice-control-totals small{display:block;color:var(--muted);font-size:8px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px}.invoice-control-totals b{font-size:12px}.invoice-control-totals .ok{color:var(--good)}.invoice-control-totals .bad{color:var(--bad)}
 @media(max-width:900px){.invoice-control-totals{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -164,9 +164,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=019&h=19">
-<script src="theme.js?v=019&h=19" defer></script>
-<script type="module" src="ruben-auth.js?v=019&h=19"></script>
+<link rel="stylesheet" href="theme.css?v=020&h=19">
+<script src="theme.js?v=020&h=19" defer></script>
+<script type="module" src="ruben-auth.js?v=020&h=19"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -361,7 +361,7 @@ body{min-height:100vh;background:
             </div>
             <div class="product-create-field">
               <label for="product-create-type">Tipo</label>
-              <input id="product-create-type" type="number" value="3">
+              <select id="product-create-type"><option value="1">Consumible</option><option value="2">Servicio</option><option value="3" selected>Producto</option></select>
             </div>
             <div class="product-create-field wide">
               <label for="product-create-name">Nombre del producto</label>
@@ -392,6 +392,10 @@ body{min-height:100vh;background:
               <input id="product-create-margin" type="number" step="0.01" value="0">
             </div>
           </div>
+          <div class="product-create-grid" style="margin-top:12px">
+            <div class="product-create-field"><label for="product-sale-taxes">Impuestos de cliente / IVA ventas</label><select id="product-sale-taxes" multiple size="3" style="height:auto"></select></div>
+            <div class="product-create-field"><label for="product-purchase-taxes">Impuestos de proveedor / IVA compras</label><select id="product-purchase-taxes" multiple size="3" style="height:auto"></select></div>
+          </div>
           <div class="product-create-checks">
             <label><input id="product-create-sale" type="checkbox" checked> Venta</label>
             <label><input id="product-create-purchase" type="checkbox" checked> Compra</label>
@@ -408,7 +412,8 @@ body{min-height:100vh;background:
       </section>
     </div>
 
-<script src="product-details.js?v=019"></script>
+<script src="product-details.js?v=020"></script>
+<script src="invoice-line-catalog.js?v=020"></script>
 <script>
 (function(){
   const select=document.getElementById('company-select');
@@ -472,6 +477,8 @@ body{min-height:100vh;background:
   const productCreateActive=document.getElementById('product-create-active');
   let invoiceUploadState={pedidoRef:'',file:null,dataUrl:'',previewUrl:'',initialExtracted:null,current:null};
   let productCreateState={index:-1,catalog:null,mode:'create',productId:null};
+  const productSaleTaxes=document.getElementById('product-sale-taxes');
+  const productPurchaseTaxes=document.getElementById('product-purchase-taxes');
   let companies=[];
 
   const fields={
@@ -1018,7 +1025,7 @@ body{min-height:100vh;background:
   async function loadProductCatalog(){
     if(productCreateState.catalog)return productCreateState.catalog;
     const data=await window.RubenAuth.invoke('product_catalog');
-    productCreateState.catalog={categories:Array.isArray(data.categories)?data.categories:[],uoms:Array.isArray(data.uoms)?data.uoms:[]};
+    productCreateState.catalog={categories:Array.isArray(data.categories)?data.categories:[],uoms:Array.isArray(data.uoms)?data.uoms:[],taxes:Array.isArray(data.taxes)?data.taxes:[]};
     return productCreateState.catalog;
   }
   function closeProductCreate(){
@@ -1056,6 +1063,20 @@ body{min-height:100vh;background:
     if(v&&!Array.from(selectEl.options).some(o=>o.value===v)){const option=document.createElement('option');option.value=v;option.textContent=String(name||('ID '+v));selectEl.appendChild(option)}
     selectEl.value=v;
   }
+  function fillProductTaxes(element,scope,selected=[]){
+    const ids=new Set(selected.map(t=>Number(t.id)));element.replaceChildren();
+    const values=(productCreateState.catalog?.taxes||[]).filter(t=>Number(t.scope)===scope);
+    for(const t of selected){if(!values.some(x=>Number(x.id)===Number(t.id)))values.push({...t,scope})}
+    for(const t of values){const o=document.createElement('option');o.value=String(t.id);o.textContent=String(t.name);o.dataset.tax=JSON.stringify(t);o.selected=ids.has(Number(t.id));element.append(o)}
+  }
+  function selectedTaxes(element){return Array.from(element.selectedOptions).map(o=>JSON.parse(o.dataset.tax))}
+  function recalculateProductPrice(){
+    const result=window.RubenLineCatalog.price(parseInvoiceNumber(productCreateList.value),parseInvoiceNumber(productCreateStandard.value),selectedTaxes(productSaleTaxes));
+    productCreateUnit.value=String(result.unit);productCreateMargin.value=result.margin.toFixed(2);
+  }
+  productCreateList.addEventListener('input',recalculateProductPrice);
+  productCreateStandard.addEventListener('input',recalculateProductPrice);
+  productSaleTaxes.addEventListener('change',recalculateProductPrice);
   async function prepareProductCatalog(){
     const catalog=await loadProductCatalog();
     productCreateCategory.innerHTML='';productCreateUom.innerHTML='';
@@ -1083,6 +1104,8 @@ body{min-height:100vh;background:
       await prepareProductCatalog();
       const data=await invokeRubenAction('get_product',{product_id:productId});
       const p=data?.product||{};
+      fillProductTaxes(productSaleTaxes,1,p.sale_taxes||[]);
+      fillProductTaxes(productPurchaseTaxes,2,p.purchase_taxes||[]);
       window.RubenProductDetails.render(extras,p);
       productCreateName.value=String(productValue(p,'Name','name','product_name')||item.product_name||item.descripcion||'');
       productCreateType.value=String(productValue(p,'type','Type','product_type')??3);
@@ -1119,16 +1142,19 @@ body{min-height:100vh;background:
     setProductCreateStatus('Cargando categorías y unidades…');
     try{
       const catalog=await prepareProductCatalog();
+      fillProductTaxes(productSaleTaxes,1);
+      fillProductTaxes(productPurchaseTaxes,2,catalog.taxes.filter(t=>Number(t.id)===Number(item.tax_id)));
       if(catalog.categories.some(c=>Number(c.id)===1))productCreateCategory.value='1';
-      if(catalog.uoms.some(u=>Number(u.id)===1))productCreateUom.value='1';
+      if(item.uom_id)fillProductSelect(productCreateUom,item.uom_id,item.unidad);else productCreateUom.value='';
       const code=String(item.codigo||'').trim(),desc=String(item.descripcion||'').trim();
       productCreateCode.value=code;
       productCreateName.value=code&&desc&&!desc.toLowerCase().includes(code.toLowerCase())?(desc+' '+code):desc||code;
-      const finalPrice=parseInvoiceNumber(item.precio_unitario_final||item.precio_unitario);
+      const finalPrice=parseInvoiceNumber(item.precio_unitario);
       productCreateStandard.value=finalPrice?String(finalPrice):'0';
       productCreateUnit.value=finalPrice?String(finalPrice):'0';
       productCreateList.value='0';productCreateMargin.value='0';productCreateType.value='3';
       productCreateSale.checked=true;productCreatePurchase.checked=true;productCreateExpense.checked=false;productCreateActive.checked=true;
+      recalculateProductPrice();
       setProductCreateStatus('Revisá los datos y guardá. El costo viene del precio unitario final con el descuento prorrateado.','ok');
       productCreateName.focus();
     }catch(error){setProductCreateStatus(error.message||'No pude cargar el ABM de producto.','bad')}
@@ -1142,12 +1168,14 @@ body{min-height:100vh;background:
     if(!name){setProductCreateStatus('El nombre es obligatorio.','bad');return}
     const categoryId=Number(productCreateCategory.value),uomId=Number(productCreateUom.value);
     if(!categoryId||!uomId){setProductCreateStatus('Elegí categoría y unidad.','bad');return}
+    if(Number(productCreateStandard.value)<0||Number(productCreateList.value)<0){setProductCreateStatus('Los precios no pueden ser negativos.','bad');return}
     const payload={
       name,category_id:categoryId,uom_id:uomId,
       standard_price:Number(productCreateStandard.value||0),unit_price:Number(productCreateUnit.value||0),
       list_price:Number(productCreateList.value||0),margin:Number(productCreateMargin.value||0),
       type:Number(productCreateType.value||3),sale_ok:productCreateSale.checked,purchase_ok:productCreatePurchase.checked,
-      can_be_expensed:productCreateExpense.checked,active:productCreateActive.checked
+      can_be_expensed:productCreateExpense.checked,active:productCreateActive.checked,
+      sale_tax_ids:Array.from(productSaleTaxes.selectedOptions).map(o=>Number(o.value)),purchase_tax_ids:Array.from(productPurchaseTaxes.selectedOptions).map(o=>Number(o.value))
     };
     productCreateSave.disabled=true;
     setProductCreateStatus(productCreateState.mode==='edit'?'Guardando cambios en PostgreSQL…':'Guardando producto en PostgreSQL…');
@@ -1155,7 +1183,7 @@ body{min-height:100vh;background:
       let id=productCreateState.productId;
       if(productCreateState.mode==='edit'){
         if(!id)throw new Error('No se recibió el ID del producto.');
-        await invokeRubenAction('update_product',{product_id:id,...payload});
+        await window.RubenAuth.invoke('product_lookup',{items:[{mode:'update_product',product_id:id,...payload}]});
       }else{
         const data=await window.RubenAuth.invoke('create_product',payload);
         id=Number(data.product_id||0);
@@ -1163,7 +1191,10 @@ body{min-height:100vh;background:
       }
       invoiceUploadState.current=collectInvoicePreview();
       const row=invoiceUploadState.current.items?.[index];
-      if(row){row.product_id=id;row.product_name=name;row.product_match_count=1;row.product_match_method=productCreateState.mode==='edit'?'updated':'created'}
+      if(row){row.unidad=productCreateUom.selectedOptions[0]?.textContent||row.unidad;row.uom_id=uomId;
+        const purchase=selectedTaxes(productPurchaseTaxes).filter(t=>Number(t.calculation_type)===1&&/iva/i.test(t.name||''));
+        if(window.RubenLineCatalog.blank(row.iva_alicuota)&&purchase.length===1){row.iva_alicuota=purchase[0].amount;row.tax_id=purchase[0].id}
+        row.product_id=id;row.product_name=name;row.product_match_count=1;row.product_match_method=productCreateState.mode==='edit'?'updated':'created'}
       renderInvoicePreview(invoiceUploadState.current);
       setInvoiceStatus(productCreateState.mode==='edit'
         ?'Producto #'+id+' actualizado y vinculado a la línea.'
@@ -1173,6 +1204,19 @@ body{min-height:100vh;background:
     finally{productCreateSave.disabled=false}
   });
 
+  function productIdForItem(item){return Number(item?.product_id||0)}
+  async function updateLineCost(index,button){
+    invoiceUploadState.current=collectInvoicePreview();const item=invoiceUploadState.current?.items?.[index];if(!item)return;
+    if(!productIdForItem(item)){if(Number(item.product_match_count||0)>1){setInvoiceStatus('Hay más de un producto coincidente. Revisá el ID antes de cargar.','bad');return}openProductCreate(index);return}
+    if(window.RubenLineCatalog.blank(item.precio_unitario)){setInvoiceStatus('Falta P.Unit final.','bad');return}
+    const cost=window.RubenLineCatalog.number(item.precio_unitario);if(cost===null){setInvoiceStatus('P.Unit final no es un precio válido.','bad');return}if(cost<0){setInvoiceStatus('El costo no puede ser negativo.','bad');return}
+    button.disabled=true;setInvoiceStatus('Actualizando costo del producto #'+item.product_id+'…');
+    try{
+      const result=await window.RubenAuth.invoke('product_lookup',{items:[{mode:'update_cost',product_id:Number(item.product_id),standard_price:cost}]});
+      const p=result.matches?.[0]?.product;if(!p||Number(p.standard_price)!==cost)throw new Error('No pude verificar el costo actualizado');
+      setInvoiceStatus('Producto #'+item.product_id+': costo actualizado a $ '+invoiceNumber(cost)+'.','ok');
+    }catch(error){setInvoiceStatus(error.message||'No pude actualizar el costo.','bad')}finally{button.disabled=false}
+  }
   function recalculateInvoiceTotals(){
     const rows=Array.from(invoiceItems.querySelectorAll('tr'));
     let qty=0,net=0,iva=0;
@@ -1182,7 +1226,7 @@ body{min-height:100vh;background:
       const unit=val('precio_unitario');
       const rate=val('iva_alicuota');
       let amount=val('importe');
-      if(!amount && q && unit)amount=q*unit;
+      if(!window.RubenLineCatalog.blank(tr.querySelector('[data-item-field="cantidad"]')?.value)&&!window.RubenLineCatalog.blank(tr.querySelector('[data-item-field="precio_unitario"]')?.value)){amount=Math.round(q*unit*100)/100;tr.querySelector('[data-item-field="importe"]').value=String(amount)}
       qty+=q;
       net+=amount;
       iva+=amount*rate/100;
@@ -1196,16 +1240,17 @@ body{min-height:100vh;background:
     const documentIva=parseInvoiceNumber(data.total_iva);
     const documentTotal=parseInvoiceNumber(data.total)||(documentNet+documentIva);
     const diff=Math.round((linesTotal-documentTotal)*100)/100;
+    const missingIva=(data.items||[]).some(x=>window.RubenLineCatalog.blank(x.iva_alicuota));
     invoiceTotalQty.textContent=qty.toLocaleString('es-AR',{maximumFractionDigits:4});
     invoiceTotalNet.textContent='$ '+invoiceNumber(net);
-    invoiceTotalIva.textContent='$ '+invoiceNumber(iva);
+    invoiceTotalIva.textContent=missingIva?'Elegir IVA':'$ '+invoiceNumber(iva);
     invoiceControlNet.textContent='$ '+invoiceNumber(net);
-    invoiceControlIva.textContent='$ '+invoiceNumber(iva);
-    invoiceControlTotal.textContent='$ '+invoiceNumber(linesTotal);
+    invoiceControlIva.textContent=missingIva?'Pendiente':'$ '+invoiceNumber(iva);
+    invoiceControlTotal.textContent=missingIva?'Pendiente':'$ '+invoiceNumber(linesTotal);
     invoiceControlDocument.textContent='$ '+invoiceNumber(documentTotal);
-    invoiceControlDifference.textContent='$ '+invoiceNumber(diff);
-    invoiceControlDifference.classList.toggle('ok',Math.abs(diff)<0.02);
-    invoiceControlDifference.classList.toggle('bad',Math.abs(diff)>=0.02);
+    invoiceControlDifference.textContent=missingIva?'Pendiente':'$ '+invoiceNumber(diff);
+    invoiceControlDifference.classList.toggle('ok',!missingIva&&Math.abs(diff)<0.02);
+    invoiceControlDifference.classList.toggle('bad',missingIva||Math.abs(diff)>=0.02);
   }
 
   function renderInvoicePreview(data){
@@ -1222,7 +1267,8 @@ body{min-height:100vh;background:
     items.forEach((item,index)=>{
       const tr=document.createElement('tr');tr.dataset.index=String(index);
       const addInput=(key,value,cls='')=>{const td=document.createElement('td'),input=document.createElement('input');input.dataset.itemField=key;input.value=String(value??'');if(cls)input.className=cls;td.appendChild(input);tr.appendChild(td);return input};
-      addInput('codigo',item?.codigo);
+      const codeInput=addInput('codigo',item?.codigo,'invoice-code-edit');
+      const codeButton=document.createElement('button');codeButton.type='button';codeButton.className='invoice-code-btn';codeButton.dataset.updateCost=String(index);codeButton.textContent=String(item.codigo||'Producto');codeButton.title=productIdForItem(item)>0?'Actualizar costo con P.Unit final':'Cargar producto con P.Unit final';codeInput.parentNode.prepend(codeButton);codeInput.setAttribute('aria-label','Corregir código');codeInput.addEventListener('input',()=>{codeButton.textContent=codeInput.value||'Producto'});
       addInput('descripcion',item?.descripcion);
       const idTd=document.createElement('td'),productId=Number(item?.product_id||0);
       if(productId>0){
@@ -1235,11 +1281,11 @@ body{min-height:100vh;background:
       }
       tr.appendChild(idTd);
       addInput('cantidad',item?.cantidad);
-      addInput('unidad',item?.unidad);
+      const unitTd=document.createElement('td');unitTd.append(window.RubenLineCatalog.select('unidad',item,productCreateState.catalog||{}));tr.append(unitTd);
       addInput('precio_unitario_original',item?.precio_unitario_original||item?.precio_unitario,'price-original');
       const descTd=document.createElement('td');descTd.className='discount-cell';descTd.textContent=Number(item?.descuento_prorrateado_pct||0)>0?(Number(item.descuento_prorrateado_pct).toLocaleString('es-AR',{maximumFractionDigits:2})+'%'):'—';tr.appendChild(descTd);
       addInput('precio_unitario',item?.precio_unitario_final||item?.precio_unitario,'price-final');
-      addInput('iva_alicuota',item?.iva_alicuota);
+      const taxTd=document.createElement('td');taxTd.append(window.RubenLineCatalog.select('iva_alicuota',item,productCreateState.catalog||{}));tr.append(taxTd);
       addInput('importe',item?.importe);
       invoiceItems.appendChild(tr);
     });
@@ -1247,6 +1293,7 @@ body{min-height:100vh;background:
     invoiceDocumentPreview.hidden=!invoiceUploadState.file;
     recalculateInvoiceTotals();
   }
+  invoiceItems.addEventListener('change',()=>{recalculateInvoiceTotals()});
   invoiceItems.addEventListener('input',()=>{
     recalculateInvoiceTotals();
   });
@@ -1254,6 +1301,7 @@ body{min-height:100vh;background:
     recalculateInvoiceTotals();
   });
   invoiceItems.addEventListener('click',e=>{
+    const cost=e.target.closest('[data-update-cost]');if(cost){updateLineCost(Number(cost.dataset.updateCost),cost);return}
     const edit=e.target.closest('[data-edit-product]');
     if(edit){openProductEdit(Number(edit.dataset.editProduct));return}
     const btn=e.target.closest('[data-create-product]');
@@ -1265,7 +1313,8 @@ body{min-height:100vh;background:
     const originalItems=Array.isArray(base.items)?base.items:[];
     base.items=Array.from(invoiceItems.querySelectorAll('tr')).map((tr,index)=>{
       const row={...(originalItems[index]||{})};
-      tr.querySelectorAll('[data-item-field]').forEach(input=>{row[input.dataset.itemField]=input.value});
+      tr.querySelectorAll('[data-item-field]').forEach(input=>{row[input.dataset.itemField]=input.value;if(input.tagName==='SELECT'){const id=Number(input.selectedOptions[0]?.dataset.id||0);row[input.dataset.itemField==='unidad'?'uom_id':'tax_id']=id||null}});
+      row.precio_unitario_final=row.precio_unitario;
       return row;
     });
     return base;
@@ -1276,12 +1325,13 @@ body{min-height:100vh;background:
     const lookupItems=items.map(item=>({descripcion:String(item?.descripcion||'').trim(),codigo:String(item?.codigo||'').trim()}));
     if(!lookupItems.some(item=>item.descripcion||item.codigo))return {data,lookupError:''};
     try{
+      await loadProductCatalog();
       const lookup=await window.RubenAuth.invoke('product_lookup',{items:lookupItems});
       const matches=Array.isArray(lookup?.matches)?lookup.matches:[];
       const byIndex=new Map(matches.map(match=>[Number(match?.item_index),match]));
       data.items=items.map((item,index)=>{
         const match=byIndex.get(index),count=Number(match?.match_count||0);
-        return {...item,
+        return {...window.RubenLineCatalog.hydrate(item,match),
           product_id:count===1&&Number(match?.product_id||0)>0?Number(match.product_id):null,
           product_name:count===1?String(match?.product_name||''):'',
           product_match_method:String(match?.match_method||'not_found'),
@@ -1398,6 +1448,7 @@ body{min-height:100vh;background:
     const file=invoiceUploadState.file;
     if(!sb||!file||!invoiceUploadState.current){setInvoiceStatus('Primero leé el comprobante.','bad');return}
     let confirmed=collectInvoicePreview();
+    if((confirmed.items||[]).some(x=>window.RubenLineCatalog.blank(x.unidad)||window.RubenLineCatalog.blank(x.iva_alicuota))){setInvoiceStatus('Elegí Unidad e IVA en todas las líneas antes de guardar.','bad');return}
     const verified=await enrichInvoiceProducts(confirmed,true);
     confirmed=verified.data;
     invoiceUploadState.current=confirmed;
@@ -1557,6 +1608,7 @@ body{min-height:100vh;background:
     status.className='status';status.textContent='Cambiando compañía…';
     try{
       const data=await window.RubenAuth.invoke('select_company',{company_id:id});
+      productCreateState.catalog=null;
       renderCompany(data.active_company);
       await loadDashboard();
     }catch(error){
