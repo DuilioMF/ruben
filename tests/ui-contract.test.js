@@ -100,3 +100,12 @@ test('Muestra impuestos grabados en la orden de compra',()=>{
   assert.match(html,/tax_count/);
   assert.match(html,/impuesto\(s\)/);
 });
+
+
+test('Muestra sumatorias de control del comprobante',()=>{
+  assert.match(html,/invoice-items-totals/);
+  assert.match(html,/invoice-control-totals/);
+  assert.match(html,/recalculateInvoiceTotals/);
+  assert.match(html,/Total comprobante/);
+  assert.match(html,/Diferencia/);
+});
