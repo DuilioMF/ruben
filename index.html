@@ -121,6 +121,9 @@ body{min-height:100vh;background:
 .invoice-field label{display:block;color:var(--gold2);font-size:8px;letter-spacing:.12em;margin-bottom:5px;text-transform:uppercase}
 .invoice-field input,.invoice-correction textarea{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:10px;font:500 11px Inter}
 .invoice-items{width:100%;border-collapse:collapse;font-size:10px}.invoice-items th,.invoice-items td{border-bottom:1px solid var(--line);padding:7px}.invoice-items th{color:var(--gold2);text-align:left;background:var(--panel2)}.invoice-items input{width:100%;min-width:80px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px;font-size:10px}
+.invoice-items tfoot td{background:var(--panel2);color:var(--gold2);font-weight:900;border-top:2px solid var(--gold);white-space:nowrap}.invoice-total-row td:nth-last-child(-n+2){text-align:right}
+.invoice-control-totals{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:8px;margin-top:10px}.invoice-control-totals>div{border:1px solid var(--line);background:var(--panel);padding:9px 10px}.invoice-control-totals small{display:block;color:var(--muted);font-size:8px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px}.invoice-control-totals b{font-size:12px}.invoice-control-totals .ok{color:var(--good)}.invoice-control-totals .bad{color:var(--bad)}
+@media(max-width:900px){.invoice-control-totals{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .invoice-correction{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.invoice-correction label{display:block;color:var(--gold2);font-size:9px;font-weight:800;margin-bottom:7px}
 .invoice-correction-actions,.invoice-save-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
 .invoice-order-btn{margin-top:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer}
@@ -160,9 +163,9 @@ body{min-height:100vh;background:
 @media(max-width:700px){.filters{grid-template-columns:1fr}.filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.filter-actions .refresh{width:100%}.metrics{grid-template-columns:1fr}.company-data{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.hero h1{font-size:60px}}
 @media(max-width:460px){.company-data{grid-template-columns:1fr}.wrap{width:min(94vw,100%)}.period{padding:16px}.period-head{align-items:flex-start;flex-direction:column}.period-date{width:100%}}
 </style>
-<link rel="stylesheet" href="theme.css?v=017&h=18">
-<script src="theme.js?v=017&h=18" defer></script>
-<script type="module" src="ruben-auth.js?v=017&h=18"></script>
+<link rel="stylesheet" href="theme.css?v=018&h=19">
+<script src="theme.js?v=018&h=19" defer></script>
+<script type="module" src="ruben-auth.js?v=018&h=19"></script>
 </head>
 <body>
 <div class="wrap" id="ruben-app">
@@ -290,7 +293,23 @@ body{min-height:100vh;background:
                   <table class="invoice-items">
                     <thead><tr><th>Código</th><th>Producto / concepto</th><th>ID producto</th><th>Cantidad</th><th>Unidad</th><th>P.Unit original</th><th>Desc.</th><th>P.Unit final</th><th>IVA</th><th>Importe</th></tr></thead>
                     <tbody id="invoice-items"></tbody>
+                    <tfoot id="invoice-items-totals">
+                      <tr class="invoice-total-row">
+                        <td colspan="3">SUMATORIAS</td>
+                        <td id="invoice-total-qty">0</td>
+                        <td colspan="4"></td>
+                        <td id="invoice-total-iva">$ 0,00</td>
+                        <td id="invoice-total-net">$ 0,00</td>
+                      </tr>
+                    </tfoot>
                   </table>
+                  <div id="invoice-control-totals" class="invoice-control-totals">
+                    <div><small>Neto líneas</small><b id="invoice-control-net">$ 0,00</b></div>
+                    <div><small>IVA líneas</small><b id="invoice-control-iva">$ 0,00</b></div>
+                    <div><small>Total líneas</small><b id="invoice-control-total">$ 0,00</b></div>
+                    <div><small>Total comprobante</small><b id="invoice-control-document">$ 0,00</b></div>
+                    <div><small>Diferencia</small><b id="invoice-control-difference">$ 0,00</b></div>
+                  </div>
                 </div>
                 <div class="invoice-correction">
                   <label for="invoice-correction">PEDIR UNA CORRECCIÓN</label>
@@ -413,6 +432,14 @@ body{min-height:100vh;background:
   const invoicePreview=document.getElementById('invoice-preview');
   const invoiceFields=document.getElementById('invoice-fields');
   const invoiceItems=document.getElementById('invoice-items');
+  const invoiceTotalQty=document.getElementById('invoice-total-qty');
+  const invoiceTotalIva=document.getElementById('invoice-total-iva');
+  const invoiceTotalNet=document.getElementById('invoice-total-net');
+  const invoiceControlNet=document.getElementById('invoice-control-net');
+  const invoiceControlIva=document.getElementById('invoice-control-iva');
+  const invoiceControlTotal=document.getElementById('invoice-control-total');
+  const invoiceControlDocument=document.getElementById('invoice-control-document');
+  const invoiceControlDifference=document.getElementById('invoice-control-difference');
   const invoiceDocumentPreview=document.getElementById('invoice-document-preview');
   const invoiceDocumentContent=document.getElementById('invoice-document-content');
   const invoiceDocumentFile=document.getElementById('invoice-document-file');
@@ -1137,6 +1164,41 @@ body{min-height:100vh;background:
     finally{productCreateSave.disabled=false}
   });
 
+  function recalculateInvoiceTotals(){
+    const rows=Array.from(invoiceItems.querySelectorAll('tr'));
+    let qty=0,net=0,iva=0;
+    for(const tr of rows){
+      const val=key=>parseInvoiceNumber(tr.querySelector('[data-item-field="'+key+'"]')?.value);
+      const q=val('cantidad');
+      const unit=val('precio_unitario');
+      const rate=val('iva_alicuota');
+      let amount=val('importe');
+      if(!amount && q && unit)amount=q*unit;
+      qty+=q;
+      net+=amount;
+      iva+=amount*rate/100;
+    }
+    qty=Math.round(qty*10000)/10000;
+    net=Math.round(net*100)/100;
+    iva=Math.round(iva*100)/100;
+    const linesTotal=Math.round((net+iva)*100)/100;
+    const data=collectInvoicePreview();
+    const documentNet=parseInvoiceNumber(data.subtotal_gravado)||parseInvoiceNumber(data.subtotal);
+    const documentIva=parseInvoiceNumber(data.total_iva);
+    const documentTotal=parseInvoiceNumber(data.total)||(documentNet+documentIva);
+    const diff=Math.round((linesTotal-documentTotal)*100)/100;
+    invoiceTotalQty.textContent=qty.toLocaleString('es-AR',{maximumFractionDigits:4});
+    invoiceTotalNet.textContent='$ '+invoiceNumber(net);
+    invoiceTotalIva.textContent='$ '+invoiceNumber(iva);
+    invoiceControlNet.textContent='$ '+invoiceNumber(net);
+    invoiceControlIva.textContent='$ '+invoiceNumber(iva);
+    invoiceControlTotal.textContent='$ '+invoiceNumber(linesTotal);
+    invoiceControlDocument.textContent='$ '+invoiceNumber(documentTotal);
+    invoiceControlDifference.textContent='$ '+invoiceNumber(diff);
+    invoiceControlDifference.classList.toggle('ok',Math.abs(diff)<0.02);
+    invoiceControlDifference.classList.toggle('bad',Math.abs(diff)>=0.02);
+  }
+
   function renderInvoicePreview(data){
     invoiceFields.innerHTML='';invoiceItems.innerHTML='';
     const isTransfer=String(data?.categoria_comprobante||'').toUpperCase()==='TRANSFERENCIA';
@@ -1174,7 +1236,14 @@ body{min-height:100vh;background:
     });
     invoicePreview.hidden=false;
     invoiceDocumentPreview.hidden=!invoiceUploadState.file;
+    recalculateInvoiceTotals();
   }
+  invoiceItems.addEventListener('input',()=>{
+    recalculateInvoiceTotals();
+  });
+  invoiceFields.addEventListener('input',()=>{
+    recalculateInvoiceTotals();
+  });
   invoiceItems.addEventListener('click',e=>{
     const edit=e.target.closest('[data-edit-product]');
     if(edit){openProductEdit(Number(edit.dataset.editProduct));return}
