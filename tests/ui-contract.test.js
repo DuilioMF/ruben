@@ -94,3 +94,9 @@ test('Al guardar un comprobante intenta crear la orden de compra',()=>{
   assert.match(html,/supplier_cuit/);
   assert.match(html,/purchase_order_name/);
 });
+
+
+test('Muestra impuestos grabados en la orden de compra',()=>{
+  assert.match(html,/tax_count/);
+  assert.match(html,/impuesto\(s\)/);
+});
