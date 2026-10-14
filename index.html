@@ -1268,7 +1268,7 @@ body{min-height:100vh;background:
       const tr=document.createElement('tr');tr.dataset.index=String(index);
       const addInput=(key,value,cls='')=>{const td=document.createElement('td'),input=document.createElement('input');input.dataset.itemField=key;input.value=String(value??'');if(cls)input.className=cls;td.appendChild(input);tr.appendChild(td);return input};
       const codeInput=addInput('codigo',item?.codigo,'invoice-code-edit');
-      const codeButton=document.createElement('button');codeButton.type='button';codeButton.className='invoice-code-btn';codeButton.dataset.updateCost=String(index);codeButton.textContent=String(item.codigo||'Producto');codeButton.title=productIdForItem(item)>0?'Actualizar costo con P.Unit final':'Cargar producto con P.Unit final';codeInput.parentNode.prepend(codeButton);codeInput.setAttribute('aria-label','Corregir código');codeInput.addEventListener('input',()=>{codeButton.textContent=codeInput.value||'Producto'});
+      const codeButton=document.createElement('button');codeButton.type='button';codeButton.className='invoice-code-btn';codeButton.dataset.updateCost=String(index);codeButton.textContent=String(item.codigo||'Producto');codeButton.title=productIdForItem(item)>0?'Actualizar costo con P.Unit final':'Cargar producto con P.Unit final';codeInput.parentNode.prepend(codeButton);codeInput.hidden=true;codeInput.setAttribute('aria-label','Código del producto');codeInput.addEventListener('input',()=>{codeButton.textContent=codeInput.value||'Producto'});
       addInput('descripcion',item?.descripcion);
       const idTd=document.createElement('td'),productId=Number(item?.product_id||0);
       if(productId>0){
