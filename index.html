@@ -321,6 +321,7 @@ body{min-height:100vh;background:
                 </div>
                 <div class="invoice-save-actions">
                   <button id="invoice-save" class="invoice-btn" type="button">Guardar comprobante</button>
+                  <div id="invoice-save-result" class="invoice-status" role="status" aria-live="polite"></div>
                 </div>
               </div>
             </div>
@@ -882,6 +883,8 @@ body{min-height:100vh;background:
   function setInvoiceStatus(message,type=''){
     invoiceUploadStatus.className='invoice-status'+(type?' '+type:'');
     invoiceUploadStatus.textContent=message||'';
+    const saveResult=document.getElementById('invoice-save-result');
+    if(saveResult){saveResult.className='invoice-status'+(type?' '+type:'');saveResult.textContent=message||'';}
   }
   function closeInvoiceUpload(){
     invoiceModal.hidden=true;
@@ -1534,7 +1537,14 @@ body{min-height:100vh;background:
       invoiceSave.disabled=false;invoiceProcess.disabled=false;invoiceCorrect.disabled=false;
     }
   }
-  invoiceSave.addEventListener('click',saveInvoiceUpload);
+  invoiceSave.addEventListener('click',async()=>{
+    setInvoiceStatus('Verificando comprobante y productos…');
+    try{await saveInvoiceUpload()}
+    catch(error){
+      console.error('Ruben guardar comprobante',error);
+      setInvoiceStatus('No pude guardar el comprobante: '+(error?.message||String(error)),'bad');
+    }
+  });
 
   async function loadDashboard(){
     if(!window.RubenAuth?.state?.authorized)return;
